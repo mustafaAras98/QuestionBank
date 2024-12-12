@@ -2,9 +2,22 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   Container: {
+    padding: 10,
+    zIndex: 1,
+    justifyContent: 'center',
+  },
+  GlassBackground: {
     flex: 1,
     alignSelf: 'center',
-    padding: 10,
+    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    backgroundColor: '#EDEDED',
+    opacity: 0.7,
+    filter: 'blur(4)',
+    elevation: 1,
+    zIndex: 0,
   },
   LoginFormContainer: {
     flex: 6,

@@ -1,21 +1,32 @@
-import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
+import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 
-import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {styles} from './SignUp.style';
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 import BackgroundContainer from '../../Components/BackgroundContainerComponent';
+import ValidateEmailSchema from '../../Utils/Validation/ValidateEmailSchema';
+import ValidateUsernameSchema from '../../Utils/Validation/ValidateUsernameSchema';
+import ValidatePasswordSchema from '../../Utils/Validation/ValidatePasswordSchema';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState('');
 
-  const onSubmitPress = () =>
-    console.log(`Username: ${username} Password: ${password}`);
+  const onSubmitPress = () => {
+    let emailValidate = ValidateEmailSchema(email.trim());
+    let usernameValidate = ValidateUsernameSchema(username.trim(), 8, 18);
+    let passwordValidate = ValidatePasswordSchema(password.trim(), 8, 18);
+
+    emailValidate && usernameValidate === 'Valid' && passwordValidate === 'Valid'
+      ? setMessage('Valid')
+      : setMessage(`${emailValidate}\n${usernameValidate}\n${passwordValidate}`);
+  };
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -82,6 +93,11 @@ const SignUp = () => {
             <Text style={styles.ButtonText}>REGISTER</Text>
           </TouchableOpacity>
         </View>
+        {message !== 'Valid' && message !== '' && (
+          <View style={styles.FailedMessageContainer}>
+            <Text style={styles.MessageText}>{message}</Text>
+          </View>
+        )}
         <View style={styles.Seperator}>
           <View style={styles.SeperatorLine} />
           <Text style={styles.SeperatorText}>OR</Text>

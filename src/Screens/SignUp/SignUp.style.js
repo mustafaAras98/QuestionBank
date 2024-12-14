@@ -68,6 +68,18 @@ export const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   ButtonText: {alignSelf: 'center', fontWeight: 600, fontSize: 22},
+  FailedMessageContainer: {
+    flex: 1,
+    padding: 10,
+    opacity: 0.8,
+    justifyContent: 'center',
+    textAlign: 'center',
+    alignItems: 'center',
+    backgroundColor: '#EE4E4E',
+  },
+  MessageText:{
+    fontWeight: 700,
+  },
   Seperator: {
     flex: 1,
     flexDirection: 'row',

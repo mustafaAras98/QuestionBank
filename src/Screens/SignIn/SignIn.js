@@ -1,24 +1,36 @@
-import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
-import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 
 import {styles} from './SignIn.style';
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+
 import BackgroundContainer from '../../Components/BackgroundContainerComponent';
+
+import ValidateUsernameSchema from '../../Utils/Validation/ValidateUsernameSchema';
+import ValidatePasswordSchema from '../../Utils/Validation/ValidatePasswordSchema';
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState('');
 
-  const onSubmitPress = () =>
-    console.log(`Username: ${username} Password: ${password}`);
+  const navigation = useNavigation();
+
+  const onSubmitPress = () => {
+    let usernameValidate = ValidateUsernameSchema(username.trim(), 8, 18);
+    let passwordValidate = ValidatePasswordSchema(password.trim(), 8, 18);
+
+    usernameValidate === 'Valid' && passwordValidate === 'Valid'
+      ? setMessage('Valid')
+      : setMessage(`${usernameValidate}\n${passwordValidate}`);
+  };
+
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
-  const navigation = useNavigation();
 
   return (
     <BackgroundContainer>
@@ -69,6 +81,11 @@ const SignIn = () => {
             <Text style={styles.ButtonText}>LOGIN</Text>
           </TouchableOpacity>
         </View>
+        {message !== 'Valid' && message !== '' && (
+          <View style={styles.FailedMessageContainer}>
+            <Text style={styles.MessageText}>{message}</Text>
+          </View>
+        )}
         <View style={styles.Seperator}>
           <View style={styles.SeperatorLine} />
           <Text style={styles.SeperatorText}>OR</Text>

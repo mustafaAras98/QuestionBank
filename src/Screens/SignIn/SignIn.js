@@ -1,20 +1,18 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 
 import {styles} from './SignIn.style';
-import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-
 import BackgroundContainer from '../../Components/BackgroundContainerComponent';
 
 import ValidateUsernameSchema from '../../Utils/Validation/ValidateUsernameSchema';
 import ValidatePasswordSchema from '../../Utils/Validation/ValidatePasswordSchema';
+import TextInputComp from '../../Components/TextInputComp';
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState('');
 
   const navigation = useNavigation();
@@ -28,52 +26,30 @@ const SignIn = () => {
       : setMessage(`${usernameValidate}\n${passwordValidate}`);
   };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
     <BackgroundContainer>
       <View style={styles.Container}>
         <View style={styles.GlassBackground} />
         <View style={styles.LoginFormContainer}>
-          <View style={styles.TextInputContainer}>
-            <Text style={styles.Label}>Username</Text>
-            <FontAwesome6
-              style={styles.PromptIcon}
-              name="user"
-              iconStyle="solid"
-            />
-            <TextInput
-              placeholder="Enter Your Username..."
-              onChangeText={setUsername}
-              value={username}
-              maxLength={18}
-              style={styles.InputComp}
-            />
-          </View>
-          <View style={styles.TextInputContainer}>
-            <Text style={styles.Label}>Password</Text>
-            <FontAwesome6
-              style={styles.PromptIcon}
-              name="lock"
-              iconStyle="solid"
-            />
-            <TextInput
-              placeholder="Enter Your Password..."
-              onChangeText={setPassword}
-              value={password}
-              maxLength={18}
-              secureTextEntry={showPassword}
-              style={styles.InputComp}
-            />
-            <FontAwesome6
-              onPress={toggleShowPassword}
-              style={styles.PasswordHideIcon}
-              iconStyle="solid"
-              name={showPassword ? 'eye-slash' : 'eye'}
-            />
-          </View>
+          <TextInputComp
+            label="Username"
+            placeholder="Enter Your Username..."
+            leftLogoName="user"
+            onChangeValue={setUsername}
+            value={username}
+            maxLength={18}
+            theme="primary"
+          />
+          <TextInputComp
+            label="Password"
+            placeholder="Enter Your Password..."
+            leftLogoName="lock"
+            onChangeValue={setPassword}
+            value={password}
+            maxLength={18}
+            theme="primary"
+            isPassword={true}
+          />
           <TouchableOpacity style={styles.ForgotPasswordButton}>
             <Text style={styles.ForgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>

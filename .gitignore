@@ -75,3 +75,8 @@ yarn-error.log
 __tests__/App.test.tsx
 package-lock.json
 package.json
+android/app/build.gradle
+android/app/google-services.json
+android/build.gradle
+package-lock.json
+package.json

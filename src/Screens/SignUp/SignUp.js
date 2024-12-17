@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 
@@ -10,6 +10,8 @@ import ValidateEmailSchema from '../../Utils/Validation/ValidateEmailSchema';
 import ValidateUsernameSchema from '../../Utils/Validation/ValidateUsernameSchema';
 import ValidatePasswordSchema from '../../Utils/Validation/ValidatePasswordSchema';
 import TextInputComp from '../../Components/TextInputComp';
+import ButtonComp from '../../Components/ButtonComp';
+import {Enums} from '../../Constants/Enums';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -22,7 +24,7 @@ const SignUp = () => {
     let usernameValidate = ValidateUsernameSchema(username.trim(), 8, 18);
     let passwordValidate = ValidatePasswordSchema(password.trim(), 8, 18);
 
-    emailValidate &&
+    emailValidate === 'Valid' &&
     usernameValidate === 'Valid' &&
     passwordValidate === 'Valid'
       ? setMessage('Valid')
@@ -43,7 +45,7 @@ const SignUp = () => {
             leftLogoName="envelope"
             onChangeValue={setEmail}
             value={email}
-            theme="primary"
+            theme={Enums.TEXTINPUT_TYPES.Primary}
           />
           <TextInputComp
             label="Username"
@@ -52,7 +54,7 @@ const SignUp = () => {
             onChangeValue={setUsername}
             value={username}
             maxLength={18}
-            theme="primary"
+            theme={Enums.TEXTINPUT_TYPES.Primary}
           />
           <TextInputComp
             label="Password"
@@ -61,12 +63,14 @@ const SignUp = () => {
             onChangeValue={setPassword}
             value={password}
             maxLength={18}
-            theme="primary"
+            theme={Enums.TEXTINPUT_TYPES.Primary}
             isPassword={true}
           />
-          <TouchableOpacity style={styles.SubmitButton} onPress={onSubmitPress}>
-            <Text style={styles.ButtonText}>REGISTER</Text>
-          </TouchableOpacity>
+          <ButtonComp
+            theme={Enums.BUTTON_TYPES.Primary}
+            buttonText="REGISTER"
+            onPress={onSubmitPress}
+          />
         </View>
         {message !== 'Valid' && message !== '' && (
           <View style={styles.FailedMessageContainer}>
@@ -79,12 +83,11 @@ const SignUp = () => {
           <View style={styles.SeperatorLine} />
         </View>
         <View style={styles.OptionalRegisterButtonContainer}>
-          <TouchableOpacity style={styles.OptionalRegisterButton}>
-            <Text style={styles.OptionalRegisterButtonText}>Google</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.OptionalRegisterButton}>
-            <Text style={styles.OptionalRegisterButtonText}>Facebook</Text>
-          </TouchableOpacity>
+          <ButtonComp theme={Enums.BUTTON_TYPES.Primary} buttonText="Google" />
+          <ButtonComp
+            theme={Enums.BUTTON_TYPES.Primary}
+            buttonText="Facebook"
+          />
         </View>
         <View style={styles.NavigateRegisterContainer}>
           <Text style={styles.NavigateRegisterText}>

@@ -2,6 +2,7 @@ import {StyleSheet} from 'react-native';
 
 const baseStyle = StyleSheet.create({
   TextInputContainer: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -29,11 +30,9 @@ const baseStyle = StyleSheet.create({
     padding: 18,
   },
   rightIcon: {
-    position: 'absolute',
-    alignSelf: 'flex-end',
-    bottom: 16,
-    right: 20,
-    fontSize: 18,
+    alignSelf: 'center',
+    justifyContent: 'flex-end',
+    marginRight: '5%',
   },
 });
 

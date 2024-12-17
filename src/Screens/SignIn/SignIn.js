@@ -9,6 +9,8 @@ import BackgroundContainer from '../../Components/BackgroundContainerComponent';
 import ValidateUsernameSchema from '../../Utils/Validation/ValidateUsernameSchema';
 import ValidatePasswordSchema from '../../Utils/Validation/ValidatePasswordSchema';
 import TextInputComp from '../../Components/TextInputComp';
+import ButtonComp from '../../Components/ButtonComp';
+import {Enums} from '../../Constants/Enums';
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
@@ -38,7 +40,7 @@ const SignIn = () => {
             onChangeValue={setUsername}
             value={username}
             maxLength={18}
-            theme="primary"
+            theme={Enums.TEXTINPUT_TYPES.Primary}
           />
           <TextInputComp
             label="Password"
@@ -47,15 +49,17 @@ const SignIn = () => {
             onChangeValue={setPassword}
             value={password}
             maxLength={18}
-            theme="primary"
+            theme={Enums.TEXTINPUT_TYPES.Primary}
             isPassword={true}
           />
           <TouchableOpacity style={styles.ForgotPasswordButton}>
             <Text style={styles.ForgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.SubmitButton} onPress={onSubmitPress}>
-            <Text style={styles.ButtonText}>LOGIN</Text>
-          </TouchableOpacity>
+          <ButtonComp
+            theme={Enums.BUTTON_TYPES.Primary}
+            buttonText="LOGIN"
+            onPress={onSubmitPress}
+          />
         </View>
         {message !== 'Valid' && message !== '' && (
           <View style={styles.FailedMessageContainer}>
@@ -68,12 +72,11 @@ const SignIn = () => {
           <View style={styles.SeperatorLine} />
         </View>
         <View style={styles.OptionalLoginButtonContainer}>
-          <TouchableOpacity style={styles.OptionalLoginButton}>
-            <Text style={styles.OptionalLoginButtonText}>Google</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.OptionalLoginButton}>
-            <Text style={styles.OptionalLoginButtonText}>Facebook</Text>
-          </TouchableOpacity>
+          <ButtonComp theme={Enums.BUTTON_TYPES.Primary} buttonText="Google" />
+          <ButtonComp
+            theme={Enums.BUTTON_TYPES.Primary}
+            buttonText="Facebook"
+          />
         </View>
         <View style={styles.NavigateRegisterContainer}>
           <Text style={styles.NavigateRegisterText}>

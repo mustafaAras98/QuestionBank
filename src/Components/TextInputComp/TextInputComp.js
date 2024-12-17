@@ -3,6 +3,7 @@ import {View, Text, TextInput} from 'react-native';
 
 import styles from './TextInputComp.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import { Enums } from '../../Constants/Enums';
 
 const TextInputComp = ({
   label,
@@ -17,7 +18,7 @@ const TextInputComp = ({
   iconStyle = 'solid',
 }) => {
   const [showPassword, setShowPassword] = useState(true);
-  const currentStyle = styles[theme] || styles.primary;
+  const currentStyle = styles[theme] || styles[Enums.TEXTINPUT_TYPES.Primary];
 
   return (
     <View style={currentStyle.TextInputContainer}>

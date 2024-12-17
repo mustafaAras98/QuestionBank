@@ -2,8 +2,10 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   Container: {
+    flex: 1,
+    width: '100%',
     padding: 10,
-    zIndex: 1,
+    alignContent: 'center',
     justifyContent: 'center',
   },
   GlassBackground: {
@@ -17,25 +19,16 @@ export const styles = StyleSheet.create({
     opacity: 0.7,
     filter: 'blur(4)',
     elevation: 1,
-    zIndex: 0,
   },
   RegisterFormContainer: {
     flex: 6,
-    justifyContent: 'space-evenly',
-    alignContent: 'center',
-  },
-  SubmitButton: {
+    gap: '5%',
     padding: 10,
-    width: '100%',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    borderStyle: 'solid',
-    borderWidth: 2,
-    backgroundColor: 'white',
+    marginTop: '5%',
   },
-  ButtonText: {alignSelf: 'center', fontWeight: 600, fontSize: 22},
   FailedMessageContainer: {
     flex: 1,
+    marginHorizontal: 10,
     padding: 10,
     opacity: 0.8,
     justifyContent: 'center',
@@ -43,7 +36,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#EE4E4E',
   },
-  MessageText:{
+  MessageText: {
     fontWeight: 700,
   },
   Seperator: {
@@ -53,8 +46,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   SeperatorLine: {
+    marginHorizontal: 10,
     height: 2,
-    flex: 4,
+    flex: 5,
     backgroundColor: 'black',
   },
   SeperatorText: {
@@ -66,22 +60,10 @@ export const styles = StyleSheet.create({
   },
   OptionalRegisterButtonContainer: {
     flex: 2,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  OptionalRegisterButton: {
-    width: '45%',
     padding: 10,
-    backgroundColor: 'white',
-    borderWidth: 2,
-    justifyContent: 'center',
-  },
-  OptionalRegisterButtonText: {
-    fontWeight: 500,
-    fontSize: 24,
-    color: 'black',
-    textAlign: 'center',
+    gap: '10%',
+    flexDirection: 'row',
+    alignContent: 'center',
   },
   NavigateRegisterContainer: {
     flex: 1,

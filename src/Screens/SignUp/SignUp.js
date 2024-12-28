@@ -1,39 +1,44 @@
 import React, {useState} from 'react';
 import {View, Text} from 'react-native';
-
 import {useNavigation} from '@react-navigation/native';
 
-import {styles} from './SignUp.style';
+import authService from '../../Services/Auth.Service';
 
-import BackgroundContainer from '../../Components/BackgroundContainerComponent';
-import ValidateEmailSchema from '../../Utils/Validation/ValidateEmailSchema';
-import ValidateUsernameSchema from '../../Utils/Validation/ValidateUsernameSchema';
-import ValidatePasswordSchema from '../../Utils/Validation/ValidatePasswordSchema';
-import TextInputComp from '../../Components/TextInputComp';
-import ButtonComp from '../../Components/ButtonComp';
+import {styles} from './SignUp.style';
 import {Enums} from '../../Constants/Enums';
 
+import BackgroundContainer from '../../Components/BackgroundContainerComponent';
+import TextInputComp from '../../Components/TextInputComp';
+import ButtonComp from '../../Components/ButtonComp';
+
 const SignUp = () => {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [user, setUser] = useState({Email: '', Username: '', Password: ''});
   const [message, setMessage] = useState('');
 
-  const onSubmitPress = () => {
-    let emailValidate = ValidateEmailSchema(email.trim());
-    let usernameValidate = ValidateUsernameSchema(username.trim(), 8, 18);
-    let passwordValidate = ValidatePasswordSchema(password.trim(), 8, 18);
+  const navigation = useNavigation();
 
-    emailValidate === 'Valid' &&
-    usernameValidate === 'Valid' &&
-    passwordValidate === 'Valid'
-      ? setMessage('Valid')
-      : setMessage(
-          `${emailValidate}\n${usernameValidate}\n${passwordValidate}`,
-        );
+  const onSubmitPress = () => {
+    authService.createUserWithEmail(user).then(resultMsg => {
+      if (resultMsg === Enums.MESSAGE.SignUpSuccess) {
+        setMessage('');
+        setUser({...user, Password: ''});
+        navigation.navigate('Home');
+      } else {
+        setMessage(resultMsg);
+        setUser({...user, Password: ''});
+      }
+    });
+  };
+  const handleEmailChange = value => {
+    setUser({...user, Email: value});
+  };
+  const handleUsernameChange = value => {
+    setUser({...user, Username: value});
+  };
+  const handlePasswordChange = value => {
+    setUser({...user, Password: value});
   };
 
-  const navigation = useNavigation();
   return (
     <BackgroundContainer>
       <View style={styles.Container}>
@@ -43,16 +48,16 @@ const SignUp = () => {
             label="E-Mail"
             placeholder="Enter Your  E-Mail..."
             leftLogoName="envelope"
-            onChangeValue={setEmail}
-            value={email}
+            onChangeValue={handleEmailChange}
+            value={user.Email}
             theme={Enums.TEXTINPUT_TYPES.Primary}
           />
           <TextInputComp
             label="Username"
             placeholder="Enter Your Username..."
             leftLogoName="user"
-            onChangeValue={setUsername}
-            value={username}
+            onChangeValue={handleUsernameChange}
+            value={user.Username}
             maxLength={18}
             theme={Enums.TEXTINPUT_TYPES.Primary}
           />
@@ -60,8 +65,8 @@ const SignUp = () => {
             label="Password"
             placeholder="Enter Your Password..."
             leftLogoName="lock"
-            onChangeValue={setPassword}
-            value={password}
+            onChangeValue={handlePasswordChange}
+            value={user.Password}
             maxLength={18}
             theme={Enums.TEXTINPUT_TYPES.Primary}
             isPassword={true}
@@ -72,7 +77,7 @@ const SignUp = () => {
             onPress={onSubmitPress}
           />
         </View>
-        {message !== 'Valid' && message !== '' && (
+        {message !== Enums.STATUS.Success && message !== '' && (
           <View style={styles.FailedMessageContainer}>
             <Text style={styles.MessageText}>{message}</Text>
           </View>
@@ -91,11 +96,10 @@ const SignUp = () => {
         </View>
         <View style={styles.NavigateRegisterContainer}>
           <Text style={styles.NavigateRegisterText}>
-            Already have an account?
+            Already have an account?{' '}
             <Text
               onPress={() => navigation.navigate('SignIn')}
               style={styles.NavigateRegisterButton}>
-              {' '}
               Sign In
             </Text>
           </Text>

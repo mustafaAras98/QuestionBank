@@ -4,28 +4,36 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import {styles} from './SignIn.style';
-import BackgroundContainer from '../../Components/BackgroundContainerComponent';
-
-import ValidateUsernameSchema from '../../Utils/Validation/ValidateUsernameSchema';
-import ValidatePasswordSchema from '../../Utils/Validation/ValidatePasswordSchema';
-import TextInputComp from '../../Components/TextInputComp';
-import ButtonComp from '../../Components/ButtonComp';
 import {Enums} from '../../Constants/Enums';
 
+import BackgroundContainer from '../../Components/BackgroundContainerComponent';
+import TextInputComp from '../../Components/TextInputComp';
+import ButtonComp from '../../Components/ButtonComp';
+import authService from '../../Services/Auth.Service';
+
 const SignIn = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [user, setUser] = useState({Email: '', Password: ''});
   const [message, setMessage] = useState('');
 
   const navigation = useNavigation();
 
   const onSubmitPress = () => {
-    let usernameValidate = ValidateUsernameSchema(username.trim(), 8, 18);
-    let passwordValidate = ValidatePasswordSchema(password.trim(), 8, 18);
-
-    usernameValidate === 'Valid' && passwordValidate === 'Valid'
-      ? setMessage('Valid')
-      : setMessage(`${usernameValidate}\n${passwordValidate}`);
+    authService.signInWithEmail(user).then(resultMsg => {
+      if (resultMsg === Enums.MESSAGE.LoginSuccess) {
+        setMessage('');
+        setUser({...user, Password: ''});
+        navigation.navigate('Home');
+      } else {
+        setMessage(resultMsg);
+        setUser({...user, Password: ''});
+      }
+    });
+  };
+  const handleEmailChange = value => {
+    setUser({...user, Email: value});
+  };
+  const handlePasswordChange = value => {
+    setUser({...user, Password: value});
   };
 
   return (
@@ -34,20 +42,19 @@ const SignIn = () => {
         <View style={styles.GlassBackground} />
         <View style={styles.LoginFormContainer}>
           <TextInputComp
-            label="Username"
-            placeholder="Enter Your Username..."
-            leftLogoName="user"
-            onChangeValue={setUsername}
-            value={username}
-            maxLength={18}
+            label="E-Mail"
+            placeholder="Enter Your  E-Mail..."
+            leftLogoName="envelope"
+            onChangeValue={handleEmailChange}
+            value={user.Email}
             theme={Enums.TEXTINPUT_TYPES.Primary}
           />
           <TextInputComp
             label="Password"
             placeholder="Enter Your Password..."
             leftLogoName="lock"
-            onChangeValue={setPassword}
-            value={password}
+            onChangeValue={handlePasswordChange}
+            value={user.Password}
             maxLength={18}
             theme={Enums.TEXTINPUT_TYPES.Primary}
             isPassword={true}
@@ -61,7 +68,7 @@ const SignIn = () => {
             onPress={onSubmitPress}
           />
         </View>
-        {message !== 'Valid' && message !== '' && (
+        {message !== Enums.STATUS.Success && message !== '' && (
           <View style={styles.FailedMessageContainer}>
             <Text style={styles.MessageText}>{message}</Text>
           </View>
@@ -80,11 +87,10 @@ const SignIn = () => {
         </View>
         <View style={styles.NavigateRegisterContainer}>
           <Text style={styles.NavigateRegisterText}>
-            Doesn't have an account?
+            Don't have an account?{' '}
             <Text
               onPress={() => navigation.navigate('SignUp')}
               style={styles.NavigateRegisterButton}>
-              {' '}
               Sign Up
             </Text>
           </Text>

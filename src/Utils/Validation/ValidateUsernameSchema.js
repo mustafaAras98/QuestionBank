@@ -1,19 +1,24 @@
+import {Enums} from '../../Constants/Enums';
+
 const ValidateUsernameSchema = (username, minLength, maxLength) => {
   const usernameRegex = /^[a-zA-Z0-9._]+$/;
 
   if (!username) {
-    return 'Please enter a username.';
+    return Enums.MESSAGE.Validations.UsernameNotFound;
   }
   if (typeof username !== 'string') {
-    return 'Username must be a valid text.';
+    return Enums.MESSAGE.Validations.UsernameMustBeString;
   }
   if (username.length < minLength || username.length > maxLength) {
-    return `Username must be between ${minLength} and ${maxLength} characters long.`;
+    return Enums.MESSAGE.Validations.UsernameCharacterMessage(
+      minLength,
+      maxLength,
+    );
   }
   if (!usernameRegex.test(username)) {
-    return 'Usernames can only use letters, numbers, underscores, and periods.';
+    return Enums.MESSAGE.Validations.UsernameValidCharacters;
   }
-  return 'Valid';
+  return Enums.STATUS.Success;
 };
 
 export default ValidateUsernameSchema;

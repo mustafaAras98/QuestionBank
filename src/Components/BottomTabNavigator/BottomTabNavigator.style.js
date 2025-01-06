@@ -21,4 +21,8 @@ export const styles = new StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
   },
+  SignOutButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

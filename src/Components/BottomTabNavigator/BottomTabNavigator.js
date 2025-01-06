@@ -9,13 +9,15 @@ import Home from '../../Screens/Home';
 
 import {styles} from './BottomTabNavigator.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-import {View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
+import authService from '../../Services/Auth.Service';
 
 const TabIcons = ({route, focused}) => {
   const icons = {
     Home: 'house',
     SignIn: 'user',
     SignUp: 'user-plus',
+    SignOut: 'right-from-bracket',
   };
   return (
     <FontAwesome6
@@ -23,6 +25,21 @@ const TabIcons = ({route, focused}) => {
       iconStyle="solid"
       name={icons[route.name]}
     />
+  );
+};
+
+const SignOutScreen = () => {
+  return null;
+};
+const SignOutButton = ({children}) => {
+  return (
+    <TouchableOpacity
+      style={styles.SignOutButton}
+      onPress={() => {
+        authService.logout();
+      }}>
+      <View>{children}</View>
+    </TouchableOpacity>
   );
 };
 
@@ -51,6 +68,14 @@ const BottomTabNavigator = () => {
       {isAuthenticated ? (
         <>
           <Tab.Screen name="Home" component={Home} />
+          <Tab.Screen
+            name="SignOut"
+            component={SignOutScreen}
+            options={{
+              // eslint-disable-next-line react/no-unstable-nested-components
+              tabBarButton: props => <SignOutButton {...props} />,
+            }}
+          />
         </>
       ) : (
         <>

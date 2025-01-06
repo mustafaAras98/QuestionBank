@@ -2,6 +2,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
+  updateProfile,
 } from '@react-native-firebase/auth';
 import {usersCollection} from '../Constants/Collections';
 
@@ -44,10 +45,10 @@ const createUserWithEmail = async userParam => {
       user.Email,
       password,
     );
-    const userId = userCredential.user.uid;
 
+    await updateProfile(userCredential.user, {displayName: user.Username});
     let timeStamp = firestore.FieldValue.serverTimestamp();
-    await usersCollection.doc(userId).set({
+    await usersCollection.doc(userCredential.user.uid).set({
       user,
       createdAt: timeStamp,
     });

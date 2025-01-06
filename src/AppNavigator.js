@@ -10,6 +10,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignIn from './Screens/SignIn';
 import SignUp from './Screens/SignUp';
 import Home from './Screens/Home';
+import BottomTabNavigator from './Components/BottomTabNavigator';
 
 const AppNavigator = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const AppNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
+      <Stack.Screen name="BottomTabNavigator" component={BottomTabNavigator} />
       {isAuthenticated ? (
         <>
           <Stack.Screen name="Home" component={Home} />

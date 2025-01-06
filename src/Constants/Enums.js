@@ -8,6 +8,7 @@ export const Enums = {
   MESSAGE: {
     LoginSuccess: 'Login successful',
     SignUpSuccess: 'Sign-up successful',
+    ForgetPasswordSucces: 'Forget Password successful',
     ForgottenPasswordMailSent: 'A mail has been sent to your email address.',
     UserDeleteSuccess: 'User deleted successfully.',
     UserUpdateSuccess: 'User updated successfully.',
@@ -23,6 +24,7 @@ export const Enums = {
       WeakPassword: 'The password is too weak.',
       InvalidEmail: 'Invalid email address.',
       TooManyRequest: 'Too Many Attempt.',
+      EmailDontExists: 'The provided email address does not match any existing user accounts.',
     },
     Validations: {
       EmailValidErrors: 'Email must be valid.',

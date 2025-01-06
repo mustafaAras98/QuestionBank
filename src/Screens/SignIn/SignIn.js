@@ -32,11 +32,10 @@ const SignIn = () => {
   const onForgetPasswordPress = () => {
     authService.forgetPassword(user.Email).then(resultMsg => {
       if (resultMsg === Enums.MESSAGE.ForgetPasswordSucces) {
-        console.log('first');
         Alert.alert(
           'Forget Password Email Sent',
           Enums.MESSAGE.ForgottenPasswordMailSent,
-          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          [{text: 'OK', onPress: () => {}}],
         );
         setMessage('');
       } else {

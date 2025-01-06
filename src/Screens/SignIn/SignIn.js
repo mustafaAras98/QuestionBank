@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Alert} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 
@@ -26,6 +26,21 @@ const SignIn = () => {
       } else {
         setMessage(resultMsg);
         setUser({...user, Password: ''});
+      }
+    });
+  };
+  const onForgetPasswordPress = () => {
+    authService.forgetPassword(user.Email).then(resultMsg => {
+      if (resultMsg === Enums.MESSAGE.ForgetPasswordSucces) {
+        console.log('first');
+        Alert.alert(
+          'Forget Password Email Sent',
+          Enums.MESSAGE.ForgottenPasswordMailSent,
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        );
+        setMessage('');
+      } else {
+        setMessage(resultMsg);
       }
     });
   };
@@ -59,7 +74,9 @@ const SignIn = () => {
             theme={Enums.TEXTINPUT_TYPES.Primary}
             isPassword={true}
           />
-          <TouchableOpacity style={styles.ForgotPasswordButton}>
+          <TouchableOpacity
+            onPress={onForgetPasswordPress}
+            style={styles.ForgotPasswordButton}>
             <Text style={styles.ForgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
           <ButtonComp

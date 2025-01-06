@@ -1,12 +1,17 @@
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   updateProfile,
 } from '@react-native-firebase/auth';
 import {usersCollection} from '../Constants/Collections';
 
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  getDocs,
+  query,
+  where,
+} from '@react-native-firebase/firestore';
 
 import {Enums} from '../Constants/Enums';
 import User from '../Models/User';
@@ -110,10 +115,42 @@ const logout = async () => {
     auth.signOut();
   }
 };
+
+const forgetPassword = async email => {
+  let emailTrimmed = email.trim();
+  let emailValidate = ValidateEmailSchema(emailTrimmed);
+  if (emailValidate !== Enums.STATUS.Success) {
+    return emailValidate;
+  }
+  try {
+    const q = query(usersCollection, where('user.Email', '==', emailTrimmed));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      return Enums.MESSAGE.Errors.EmailDontExists;
+    }
+    await sendPasswordResetEmail(auth, emailTrimmed);
+    return Enums.MESSAGE.ForgetPasswordSucces;
+  } catch (error) {
+    switch (error.code) {
+      case 'auth/invalid-credential':
+        return Enums.MESSAGE.Errors.InvalidCredential;
+      case 'auth/operation-not-allowed':
+        return Enums.MESSAGE.Errors.OperationNotAllowed;
+      case 'auth/network-request-failed':
+        return Enums.MESSAGE.Errors.NetworkRequestFailed;
+      case 'auth/too-many-requests':
+        return Enums.MESSAGE.Errors.TooManyRequest;
+      default:
+        return Enums.MESSAGE.Errors.UnknownError;
+    }
+  }
+};
+
 const authService = {
   createUserWithEmail,
   signInWithEmail,
   logout,
+  forgetPassword,
 };
 
 export default authService;

@@ -24,7 +24,9 @@ export const Enums = {
       WeakPassword: 'The password is too weak.',
       InvalidEmail: 'Invalid email address.',
       TooManyRequest: 'Too Many Attempt.',
-      EmailDontExists: 'The provided email address does not match any existing user accounts.',
+      EmailDontExists:
+        'The provided email address does not match any existing user accounts.',
+      IDTokenError: 'No ID token found',
     },
     Validations: {
       EmailValidErrors: 'Email must be valid.',

@@ -1,18 +1,20 @@
 import {
   createUserWithEmailAndPassword,
+  firebase,
   getAuth,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   updateProfile,
 } from '@react-native-firebase/auth';
-import {usersCollection} from '../Constants/Collections';
-
 import firestore, {
   getDocs,
   query,
   where,
 } from '@react-native-firebase/firestore';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
+import {WEB_CLIENT_ID} from '@env';
+import {usersCollection} from '../Constants/Collections';
 import {Enums} from '../Constants/Enums';
 import User from '../Models/User';
 
@@ -111,11 +113,14 @@ const signInWithEmail = async userParam => {
   }
 };
 const logout = async () => {
-  if (auth.currentUser) {
-    auth.signOut();
+  try {
+    if (auth.currentUser) {
+      auth.signOut();
+    }
+  } catch (error) {
+    return error.code;
   }
 };
-
 const forgetPassword = async email => {
   let emailTrimmed = email.trim();
   let emailValidate = ValidateEmailSchema(emailTrimmed);
@@ -145,12 +150,62 @@ const forgetPassword = async email => {
     }
   }
 };
+const googleSignIn = async () => {
+  GoogleSignin.configure({
+    webClientId: WEB_CLIENT_ID,
+  });
+  try {
+    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+    const signInResult = await GoogleSignin.signIn();
+    let idToken = signInResult.data.idToken;
+    if (!idToken) {
+      idToken = signInResult.idToken;
+    }
+    if (!idToken) {
+      return Enums.MESSAGE.Errors.IDTokenError;
+    }
+    const googleCredential = firebase.auth.GoogleAuthProvider.credential(
+      signInResult.data.idToken,
+    );
+    auth
+      .signInWithCredential(googleCredential)
+      .then(() => saveGoogleUserToFirestore(auth.currentUser));
 
+    return Enums.MESSAGE.LoginSuccess;
+  } catch (error) {
+    return error.code;
+  }
+};
+const saveGoogleUserToFirestore = async userParam => {
+  if (!userParam) {
+    return null;
+  }
+  try {
+    const userDoc = usersCollection.doc(userParam.uid);
+    const userSnapshot = await userDoc.get();
+
+    if (!userSnapshot.exists) {
+      const user = new User(
+        userParam.email.trim(),
+        userParam.displayName.trim(),
+      );
+      let timeStamp = firestore.FieldValue.serverTimestamp();
+      await usersCollection.doc(userParam.uid).set({
+        user,
+        createdAt: timeStamp,
+      });
+    }
+    return Enums.MESSAGE.SignUpSuccess;
+  } catch (error) {
+    return error;
+  }
+};
 const authService = {
   createUserWithEmail,
   signInWithEmail,
   logout,
   forgetPassword,
+  googleSignIn,
 };
 
 export default authService;

@@ -43,6 +43,15 @@ const SignIn = () => {
       }
     });
   };
+  const googleSignIn = () => {
+    authService.googleSignIn().then(resultMsg => {
+      if (resultMsg !== Enums.MESSAGE.LoginSuccess) {
+        setMessage(resultMsg);
+      } else {
+        setMessage('');
+      }
+    });
+  };
   const handleEmailChange = value => {
     setUser({...user, Email: value});
   };
@@ -95,7 +104,11 @@ const SignIn = () => {
           <View style={styles.SeperatorLine} />
         </View>
         <View style={styles.OptionalLoginButtonContainer}>
-          <ButtonComp theme={Enums.BUTTON_TYPES.Primary} buttonText="Google" />
+          <ButtonComp
+            onPress={googleSignIn}
+            theme={Enums.BUTTON_TYPES.Primary}
+            buttonText="Google"
+          />
           <ButtonComp
             theme={Enums.BUTTON_TYPES.Primary}
             buttonText="Facebook"

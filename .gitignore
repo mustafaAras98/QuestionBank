@@ -80,3 +80,4 @@ android/app/google-services.json
 android/build.gradle
 package-lock.json
 package.json
+.env

@@ -49,7 +49,7 @@ const TextInputComp = ({
         <FontAwesome6
           style={currentStyle.rightIcon}
           iconStyle={iconStyle}
-          name={showPassword ? 'eye' : 'eye-slash'}
+          name={showPassword ? 'eye-slash' : 'eye'}
           onPress={() => setShowPassword(!showPassword)}
         />
       )}

@@ -150,7 +150,7 @@ const forgetPassword = async email => {
     }
   }
 };
-const googleSignIn = async () => {
+const signInWithGoogle = async () => {
   GoogleSignin.configure({
     webClientId: WEB_CLIENT_ID,
   });
@@ -203,9 +203,9 @@ const saveGoogleUserToFirestore = async userParam => {
 const authService = {
   createUserWithEmail,
   signInWithEmail,
+  signInWithGoogle,
   logout,
   forgetPassword,
-  googleSignIn,
 };
 
 export default authService;

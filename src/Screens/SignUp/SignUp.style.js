@@ -59,9 +59,8 @@ export const styles = StyleSheet.create({
     fontSize: 18,
   },
   OptionalRegisterButtonContainer: {
-    flex: 2,
+    flex: 1,
     padding: 10,
-    gap: '10%',
     flexDirection: 'row',
     alignContent: 'center',
   },

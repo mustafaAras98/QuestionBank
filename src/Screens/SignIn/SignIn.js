@@ -43,8 +43,8 @@ const SignIn = () => {
       }
     });
   };
-  const googleSignIn = () => {
-    authService.googleSignIn().then(resultMsg => {
+  const handleGoogleSignIn = () => {
+    authService.signInWithGoogle().then(resultMsg => {
       if (resultMsg !== Enums.MESSAGE.LoginSuccess) {
         setMessage(resultMsg);
       } else {
@@ -105,13 +105,9 @@ const SignIn = () => {
         </View>
         <View style={styles.OptionalLoginButtonContainer}>
           <ButtonComp
-            onPress={googleSignIn}
+            onPress={handleGoogleSignIn}
             theme={Enums.BUTTON_TYPES.Primary}
-            buttonText="Google"
-          />
-          <ButtonComp
-            theme={Enums.BUTTON_TYPES.Primary}
-            buttonText="Facebook"
+            buttonText="Sign in with Google"
           />
         </View>
         <View style={styles.NavigateRegisterContainer}>

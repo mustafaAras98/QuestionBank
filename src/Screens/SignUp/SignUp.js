@@ -88,11 +88,7 @@ const SignUp = () => {
           <View style={styles.SeperatorLine} />
         </View>
         <View style={styles.OptionalRegisterButtonContainer}>
-          <ButtonComp theme={Enums.BUTTON_TYPES.Primary} buttonText="Google" />
-          <ButtonComp
-            theme={Enums.BUTTON_TYPES.Primary}
-            buttonText="Facebook"
-          />
+          <ButtonComp theme={Enums.BUTTON_TYPES.Primary} buttonText="Sign in with Google" />
         </View>
         <View style={styles.NavigateRegisterContainer}>
           <Text style={styles.NavigateRegisterText}>

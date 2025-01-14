@@ -66,9 +66,8 @@ export const styles = StyleSheet.create({
     fontSize: 18,
   },
   OptionalLoginButtonContainer: {
-    flex: 2,
+    flex: 1,
     padding: 10,
-    gap: '10%',
     flexDirection: 'row',
     alignContent: 'center',
   },

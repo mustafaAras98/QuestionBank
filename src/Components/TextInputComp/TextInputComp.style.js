@@ -8,6 +8,7 @@ const baseStyle = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderWidth: 1,
+    maxHeight: '70',
   },
   InputComp: {
     flex: 1,

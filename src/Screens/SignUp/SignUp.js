@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {View, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
@@ -15,29 +15,43 @@ const SignUp = () => {
   const [user, setUser] = useState({Email: '', Username: '', Password: ''});
   const [message, setMessage] = useState('');
 
+  const userRef = useRef(user);
   const navigation = useNavigation();
 
-  const onSubmitPress = () => {
-    authService.createUserWithEmail(user).then(resultMsg => {
+  const onSubmitPress = useCallback(() => {
+    const currentUserRef = userRef.current;
+    authService.createUserWithEmail(currentUserRef).then(resultMsg => {
       if (resultMsg === Enums.MESSAGE.SignUpSuccess) {
         setMessage('');
-        setUser({...user, Password: ''});
+        setUser({...currentUserRef, Password: ''});
         navigation.navigate('Home');
       } else {
         setMessage(resultMsg);
-        setUser({...user, Password: ''});
+        setUser({...currentUserRef, Password: ''});
       }
     });
-  };
-  const handleEmailChange = value => {
-    setUser({...user, Email: value});
-  };
-  const handleUsernameChange = value => {
-    setUser({...user, Username: value});
-  };
-  const handlePasswordChange = value => {
-    setUser({...user, Password: value});
-  };
+  }, [navigation]);
+  const handleGoogleSignIn = useCallback(() => {
+    authService.signInWithGoogle().then(resultMsg => {
+      if (resultMsg !== Enums.MESSAGE.LoginSuccess) {
+        setMessage(resultMsg);
+      } else {
+        setMessage('');
+      }
+    });
+  }, []);
+  const handleEmailChange = useCallback(value => {
+    userRef.current = {...userRef.current, Email: value};
+    setUser(prev => ({...prev, Email: value}));
+  }, []);
+  const handleUsernameChange = useCallback(value => {
+    userRef.current = {...userRef.current, Username: value};
+    setUser(prev => ({...prev, Username: value}));
+  }, []);
+  const handlePasswordChange = useCallback(value => {
+    userRef.current = {...userRef.current, Password: value};
+    setUser(prev => ({...prev, Password: value}));
+  }, []);
 
   return (
     <BackgroundContainer>
@@ -88,7 +102,11 @@ const SignUp = () => {
           <View style={styles.SeperatorLine} />
         </View>
         <View style={styles.OptionalRegisterButtonContainer}>
-          <ButtonComp theme={Enums.BUTTON_TYPES.Primary} buttonText="Sign in with Google" />
+          <ButtonComp
+            onPress={handleGoogleSignIn}
+            theme={Enums.BUTTON_TYPES.Primary}
+            buttonText="Sign in with Google"
+          />
         </View>
         <View style={styles.NavigateRegisterContainer}>
           <Text style={styles.NavigateRegisterText}>

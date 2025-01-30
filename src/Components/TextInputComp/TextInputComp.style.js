@@ -19,7 +19,7 @@ const baseStyle = StyleSheet.create({
     left: 18,
     top: -10,
     backgroundColor: 'white',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     zIndex: 1,
     shadowColor: 'white',
     borderLeftWidth: 1,
@@ -33,7 +33,7 @@ const baseStyle = StyleSheet.create({
   rightIcon: {
     alignSelf: 'center',
     justifyContent: 'flex-end',
-    marginRight: '5%',
+    marginRight: '10%',
   },
 });
 

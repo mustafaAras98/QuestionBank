@@ -21,7 +21,13 @@ const AppNavigator = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(), user => {
       if (user) {
-        dispatch(setUser({email: user.email, displayName: user.displayName}));
+        dispatch(
+          setUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+          }),
+        );
       } else {
         dispatch(removeUser());
       }
@@ -49,4 +55,4 @@ const AppNavigator = () => {
   );
 };
 
-export default AppNavigator;
+export default React.memo(AppNavigator);

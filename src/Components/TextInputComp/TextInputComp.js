@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 
 import styles from './TextInputComp.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-import { Enums } from '../../Constants/Enums';
+import {Enums} from '../../Constants/Enums';
 
 const TextInputComp = ({
   label,
@@ -16,13 +16,17 @@ const TextInputComp = ({
   theme,
   isPassword = false,
   iconStyle = 'solid',
+  fontSizeParam = 14,
+  rightLogoOnPress,
 }) => {
   const [showPassword, setShowPassword] = useState(true);
   const currentStyle = styles[theme] || styles[Enums.TEXTINPUT_TYPES.Primary];
 
   return (
     <View style={currentStyle.TextInputContainer}>
-      <Text style={currentStyle.Label}>{label}</Text>
+      <Text style={[currentStyle.Label, {fontSize: fontSizeParam}]}>
+        {label}
+      </Text>
       {leftLogoName !== 'None' && (
         <FontAwesome6
           style={currentStyle.leftIcon}
@@ -39,11 +43,13 @@ const TextInputComp = ({
         secureTextEntry={isPassword && !showPassword}
       />
       {rightLogoName !== 'None' && (
-        <FontAwesome6
-          style={currentStyle.rightIcon}
-          iconStyle={iconStyle}
-          name={rightLogoName}
-        />
+        <TouchableOpacity onPress={rightLogoOnPress}>
+          <FontAwesome6
+            style={currentStyle.rightIcon}
+            iconStyle={iconStyle}
+            name={rightLogoName}
+          />
+        </TouchableOpacity>
       )}
       {isPassword && (
         <FontAwesome6
@@ -57,4 +63,4 @@ const TextInputComp = ({
   );
 };
 
-export default TextInputComp;
+export default React.memo(TextInputComp);

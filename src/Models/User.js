@@ -1,7 +1,7 @@
 class User {
   constructor(email, username) {
-    this.Email = email;
-    this.Username = username;
+    this.Email = email.trim();
+    this.Username = username.trim();
   }
 
   toString() {
@@ -23,7 +23,5 @@ class User {
     },
   };
 }
-
-
 
 export default User;

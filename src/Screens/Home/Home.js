@@ -35,21 +35,25 @@ const Home = () => {
   }, [user.info.uid]);
 
   useEffect(() => {
-    let updatedData = [...albumDatas];
+    let updatedData = [];
+
     if (
       !albumDatas ||
       albumDatas.length === 0 ||
-      albumDatas === Enums.MESSAGE.Errors.FetchAlbumsError
+      albumDatas === Enums.MESSAGE.Errors.AlbumsDontExists
     ) {
       updatedData = [{id: 'placeholder-1', isPlaceholder: true}];
+      setPaddedData(updatedData);
+      return;
     } else {
+      updatedData = [...albumDatas];
       updatedData.push({
         id: `placeholder-${updatedData.length + 1}`,
         isPlaceholder: true,
       });
+      setPaddedData(updatedData);
+      return;
     }
-
-    setPaddedData(updatedData);
   }, [albumDatas]);
 
   const handleScrollToIndex = index => {

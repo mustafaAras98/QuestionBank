@@ -7,6 +7,7 @@ import {
   updateProfile,
 } from '@react-native-firebase/auth';
 import firestore, {
+  addDoc,
   getDocs,
   query,
   where,
@@ -21,11 +22,12 @@ import User from '../Models/User';
 import ValidateEmailSchema from '../Utils/Validation/ValidateEmailSchema';
 import ValidateUsernameSchema from '../Utils/Validation/ValidateUsernameSchema';
 import ValidatePasswordSchema from '../Utils/Validation/ValidatePasswordSchema';
+import handleFirebaseAuthError from '../Utils/FirebaseErrorHandler';
 
 const auth = getAuth();
 
 const createUserWithEmail = async userParam => {
-  const user = new User(userParam.Email.trim(), userParam.Username.trim());
+  const user = new User(userParam.Email, userParam.Username);
   const password = userParam.Password.trim();
 
   let emailValidate = ValidateEmailSchema(user.Email);
@@ -52,29 +54,11 @@ const createUserWithEmail = async userParam => {
       user.Email,
       password,
     );
+    await saveNewUserToFirestore(userCredential, user);
 
-    await updateProfile(userCredential.user, {displayName: user.Username});
-    let timeStamp = firestore.FieldValue.serverTimestamp();
-    await usersCollection.doc(userCredential.user.uid).set({
-      user,
-      createdAt: timeStamp,
-    });
     return Enums.MESSAGE.SignUpSuccess;
   } catch (error) {
-    switch (error.code) {
-      case 'auth/email-already-in-use':
-        return Enums.MESSAGE.Errors.EmailAlreadyExists;
-      case 'auth/invalid-email':
-        return Enums.MESSAGE.Errors.InvalidEmail;
-      case 'auth/operation-not-allowed':
-        return Enums.MESSAGE.Errors.OperationNotAllowed;
-      case 'auth/weak-password':
-        return Enums.MESSAGE.Errors.WeakPassword;
-      case 'auth/network-request-failed':
-        return Enums.MESSAGE.Errors.NetworkRequestFailed;
-      default:
-        return Enums.MESSAGE.Errors.UnknownError;
-    }
+    return handleFirebaseAuthError(error);
   }
 };
 const signInWithEmail = async userParam => {
@@ -98,18 +82,7 @@ const signInWithEmail = async userParam => {
     await signInWithEmailAndPassword(auth, email, password);
     return Enums.MESSAGE.LoginSuccess;
   } catch (error) {
-    switch (error.code) {
-      case 'auth/invalid-credential':
-        return Enums.MESSAGE.Errors.InvalidCredential;
-      case 'auth/operation-not-allowed':
-        return Enums.MESSAGE.Errors.OperationNotAllowed;
-      case 'auth/network-request-failed':
-        return Enums.MESSAGE.Errors.NetworkRequestFailed;
-      case 'auth/too-many-requests':
-        return Enums.MESSAGE.Errors.TooManyRequest;
-      default:
-        return Enums.MESSAGE.Errors.UnknownError;
-    }
+    return handleFirebaseAuthError(error);
   }
 };
 const logout = async () => {
@@ -136,18 +109,7 @@ const forgetPassword = async email => {
     await sendPasswordResetEmail(auth, emailTrimmed);
     return Enums.MESSAGE.ForgetPasswordSucces;
   } catch (error) {
-    switch (error.code) {
-      case 'auth/invalid-credential':
-        return Enums.MESSAGE.Errors.InvalidCredential;
-      case 'auth/operation-not-allowed':
-        return Enums.MESSAGE.Errors.OperationNotAllowed;
-      case 'auth/network-request-failed':
-        return Enums.MESSAGE.Errors.NetworkRequestFailed;
-      case 'auth/too-many-requests':
-        return Enums.MESSAGE.Errors.TooManyRequest;
-      default:
-        return Enums.MESSAGE.Errors.UnknownError;
-    }
+    return handleFirebaseAuthError(error);
   }
 };
 const signInWithGoogle = async () => {
@@ -173,33 +135,60 @@ const signInWithGoogle = async () => {
 
     return Enums.MESSAGE.LoginSuccess;
   } catch (error) {
-    return error.code;
+    return handleFirebaseAuthError(error);
   }
 };
 const saveGoogleUserToFirestore = async userParam => {
   if (!userParam) {
-    return null;
+    throw new Error('User parameter is required');
   }
   try {
-    const userDoc = usersCollection.doc(userParam.uid);
-    const userSnapshot = await userDoc.get();
+    const userRef = usersCollection.doc(userParam.uid);
+    const userSnapshot = await userRef.get();
 
     if (!userSnapshot.exists) {
       const user = new User(
         userParam.email.trim(),
         userParam.displayName.trim(),
       );
+
       let timeStamp = firestore.FieldValue.serverTimestamp();
-      await usersCollection.doc(userParam.uid).set({
+      await userRef.set({
         user,
         createdAt: timeStamp,
       });
+      const albumsRef = userRef.collection('Albums');
+      await addDoc(albumsRef, {});
     }
     return Enums.MESSAGE.SignUpSuccess;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
+const saveNewUserToFirestore = async (userCredential, user) => {
+  if (!userCredential) {
+    throw new Error('User parameter is required');
+  }
+  try {
+    await updateProfile(userCredential.user, {
+      displayName: user.Username,
+    });
+
+    const userRef = usersCollection.doc(userCredential.user.uid);
+    let timeStamp = firestore.FieldValue.serverTimestamp();
+    await usersCollection.doc(userCredential.user.uid).set({
+      user,
+      createdAt: timeStamp,
+    });
+    const albumsRef = userRef.collection('Albums');
+    await addDoc(albumsRef, {});
+
+    return Enums.MESSAGE.SignUpSuccess;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const authService = {
   createUserWithEmail,
   signInWithEmail,

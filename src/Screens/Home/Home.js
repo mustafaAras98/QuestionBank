@@ -9,39 +9,45 @@ import {Enums} from '../../Constants/Enums';
 
 const Home = () => {
   const user = useSelector(state => state.user);
+
   const flatlistRef = useRef(null);
+  const cardRef = useRef(null);
+
   const [albumDatas, setAlbumDatas] = useState([]);
   const [paddedData, setPaddedData] = useState([]);
-
   const [activeCardId, setActiveCardId] = useState(null);
 
-  const cardRef = useRef(null);
   const handlePressOutside = () => {
     setActiveCardId(null);
   };
 
   useEffect(() => {
-    const fetchAlbumTitles = async () => {
+    const fetchAlbumDatas = async () => {
       try {
-        const titles = await userService.fetchAlbumsByUserId(user.info.uid);
-        setAlbumDatas(titles);
+        const datas = await userService.fetchAlbumsByUserId(user.info.uid);
+        setAlbumDatas(datas);
       } catch (error) {
         console.error('Album titles fetch error:', error);
       }
     };
 
-    fetchAlbumTitles();
+    fetchAlbumDatas();
   }, [user.info.uid]);
 
   useEffect(() => {
-    if (!albumDatas || albumDatas.length === 0) {
-      return;
+    let updatedData = [...albumDatas];
+    if (
+      !albumDatas ||
+      albumDatas.length === 0 ||
+      albumDatas === Enums.MESSAGE.Errors.FetchAlbumsError
+    ) {
+      updatedData = [{id: 'placeholder-1', isPlaceholder: true}];
+    } else {
+      updatedData.push({
+        id: `placeholder-${updatedData.length + 1}`,
+        isPlaceholder: true,
+      });
     }
-    const updatedData = [...albumDatas];
-    updatedData.push({
-      id: `placeholder-${updatedData.length + 1}`,
-      isPlaceholder: true,
-    });
 
     setPaddedData(updatedData);
   }, [albumDatas]);
@@ -54,10 +60,10 @@ const Home = () => {
       });
     }
   };
+
   const handleLongPressOnAlbum = useCallback(id => {
     setActiveCardId(prevId => (prevId === id ? null : id));
   }, []);
-
   const renderItem = useCallback(
     ({item, index}) => {
       let whichRow = '';

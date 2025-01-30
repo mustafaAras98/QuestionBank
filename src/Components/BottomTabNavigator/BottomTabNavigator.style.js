@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-export const styles = new StyleSheet.create({
+export const styles = StyleSheet.create({
   TabBarStyle: {
     position: 'absolute',
     height: '8%',

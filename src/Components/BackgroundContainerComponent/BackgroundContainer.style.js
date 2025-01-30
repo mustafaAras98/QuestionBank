@@ -1,4 +1,4 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   Container: {flex: 1},
@@ -7,7 +7,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   ChildrenContainer: {
-    height: Dimensions.get('window').height * 0.7,
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },

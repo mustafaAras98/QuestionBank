@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {View, Text, TouchableOpacity, Alert} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -15,20 +15,32 @@ const SignIn = () => {
   const [user, setUser] = useState({Email: '', Password: ''});
   const [message, setMessage] = useState('');
 
+  const userRef = useRef(user);
   const navigation = useNavigation();
 
-  const onSubmitPress = () => {
-    authService.signInWithEmail(user).then(resultMsg => {
+  const onSubmitPress = useCallback(() => {
+    const currentUserRef = userRef.current;
+
+    authService.signInWithEmail(currentUserRef).then(resultMsg => {
       if (resultMsg === Enums.MESSAGE.LoginSuccess) {
         setMessage('');
-        setUser({...user, Password: ''});
+        setUser({...currentUserRef, Password: ''});
         navigation.navigate('Home');
       } else {
         setMessage(resultMsg);
-        setUser({...user, Password: ''});
+        setUser({...currentUserRef, Password: ''});
       }
     });
-  };
+  }, [navigation]);
+  const handleGoogleSignIn = useCallback(() => {
+    authService.signInWithGoogle().then(resultMsg => {
+      if (resultMsg !== Enums.MESSAGE.LoginSuccess) {
+        setMessage(resultMsg);
+      } else {
+        setMessage('');
+      }
+    });
+  }, []);
   const onForgetPasswordPress = () => {
     authService.forgetPassword(user.Email).then(resultMsg => {
       if (resultMsg === Enums.MESSAGE.ForgetPasswordSucces) {
@@ -43,21 +55,14 @@ const SignIn = () => {
       }
     });
   };
-  const handleGoogleSignIn = () => {
-    authService.signInWithGoogle().then(resultMsg => {
-      if (resultMsg !== Enums.MESSAGE.LoginSuccess) {
-        setMessage(resultMsg);
-      } else {
-        setMessage('');
-      }
-    });
-  };
-  const handleEmailChange = value => {
-    setUser({...user, Email: value});
-  };
-  const handlePasswordChange = value => {
-    setUser({...user, Password: value});
-  };
+  const handleEmailChange = useCallback(value => {
+    userRef.current = {...userRef.current, Email: value};
+    setUser(prev => ({...prev, Email: value}));
+  }, []);
+  const handlePasswordChange = useCallback(value => {
+    userRef.current = {...userRef.current, Password: value};
+    setUser(prev => ({...prev, Password: value}));
+  }, []);
 
   return (
     <BackgroundContainer>
@@ -125,4 +130,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default React.memo(SignIn);

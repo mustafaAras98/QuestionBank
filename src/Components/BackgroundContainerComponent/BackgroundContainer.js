@@ -17,4 +17,4 @@ const BackgroundContainer = ({children}) => {
   );
 };
 
-export default BackgroundContainer;
+export default React.memo(BackgroundContainer);

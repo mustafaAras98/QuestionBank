@@ -1,5 +1,5 @@
 export const Enums = {
-  BUTTON_TYPES: {Primary: 'primary', Secondary: 'secondary'},
+  BUTTON_TYPES: {Primary: 'primary', Secondary: 'secondary', Delete: 'delete'},
   TEXTINPUT_TYPES: {Primary: 'primary', Secondary: 'secondary'},
   STATUS: {
     Success: 'Success',
@@ -27,6 +27,9 @@ export const Enums = {
       EmailDontExists:
         'The provided email address does not match any existing user accounts.',
       IDTokenError: 'No ID token found',
+      FetchAlbumsError:
+        'Something went wrong while accessing your albums. Please try again in a few moments.',
+      AlbumsDontExists: 'User album does not exist',
     },
     Validations: {
       EmailValidErrors: 'Email must be valid.',
@@ -46,5 +49,11 @@ export const Enums = {
         'Password must contain at least one lowercase letter.',
       PasswordAtLeastOneNumber: 'Password must contain at least one number.',
     },
+  },
+  FLATLISTROW: {
+    First: 'First',
+    Last: 'Last',
+    SecondToLast: 'SecondToLast',
+    Other: 'Other',
   },
 };

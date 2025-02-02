@@ -74,7 +74,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
             value={title}
             onChangeValue={handleTitleChange}
             rightLogoOnPress={async () => {
-              handleEditTitlePress();
+              await handleEditTitlePress();
               reFetchAlbums();
             }}
           />

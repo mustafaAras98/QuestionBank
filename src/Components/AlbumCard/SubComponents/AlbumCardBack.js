@@ -1,28 +1,66 @@
-import {View, TouchableOpacity} from 'react-native';
-import React, {useCallback, useRef, useState} from 'react';
+import {View, ActivityIndicator, TouchableOpacity, Alert} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 import {styles} from '../AlbumCard.style';
 import TextInputComp from '../../TextInputComp';
 import {Enums} from '../../../Constants/Enums';
 import ButtonComp from '../../ButtonComp';
+import userService from '../../../Services/User.Service';
+import {useSelector} from 'react-redux';
 
-const AlbumCardBack = ({onLongPress}) => {
+const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
   const [title, setTitle] = useState('');
   const titleRef = useRef(title);
+
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const handleTitleChange = useCallback(value => {
     titleRef.current = value;
     setTitle(value);
   }, []);
 
-  const handleDeleteButtonPress = () => {
-    //console.log('Delete button implement edilecek');
+  useEffect(() => {
+    if (isFlipped === false) {
+      setTitle('');
+    }
+  }, [isFlipped]);
+
+  const userUid = useSelector(state => state.user.info.uid);
+
+  const handleDeleteButtonPress = async () => {
+    setDeleteLoading(true);
+    try {
+      const status = await userService.removeAlbum(albumItem.Uid, userUid);
+      if (status !== Enums.STATUS.Success) {
+        throw new Error(`Album creation failed: ${status}`);
+      }
+    } catch (error) {
+      console.error('Delete Album Error:', error);
+      Alert.alert('Error', error.message || 'Something went wrong.');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+  const handleEditTitlePress = async () => {
+    try {
+      const status = await userService.editAlbumTitle(
+        albumItem.Uid,
+        userUid,
+        title,
+      );
+      if (status !== Enums.STATUS.Success) {
+        throw new Error(`Album creation failed: ${status}`);
+      }
+    } catch (error) {
+      console.error('Delete Album Error:', error);
+      Alert.alert('Error', error.message || 'Something went wrong.');
+    }
   };
   return (
     <TouchableOpacity
-      onLongPress={onLongPress}
-      onPress={() => {
-        /* console.log('Go To Album Page!'); */
+      onLongPress={() => {
+        onLongPress();
+        setTitle('');
       }}
       style={styles.InnerContainer}>
       <View style={styles.AlbumCardBackContainer}>
@@ -35,19 +73,27 @@ const AlbumCardBack = ({onLongPress}) => {
             placeholder="New Title"
             value={title}
             onChangeValue={handleTitleChange}
-            rightLogoOnPress={() => {
-              console.log(title);
+            rightLogoOnPress={async () => {
+              handleEditTitlePress();
+              reFetchAlbums();
             }}
           />
         </View>
         <View style={styles.AlbumCardBackItemContainer}>
-          <ButtonComp
-            theme={Enums.BUTTON_TYPES.Delete}
-            buttonText="Delete"
-            onPress={handleDeleteButtonPress}
-            rightLogoName="trash-can"
-            contentSize={16}
-          />
+          {deleteLoading ? (
+            <ActivityIndicator size="large" color="red" />
+          ) : (
+            <ButtonComp
+              theme={Enums.BUTTON_TYPES.Delete}
+              buttonText="Delete"
+              onPress={async () => {
+                await handleDeleteButtonPress();
+                reFetchAlbums();
+              }}
+              rightLogoName="trash-can"
+              contentSize={16}
+            />
+          )}
         </View>
       </View>
     </TouchableOpacity>

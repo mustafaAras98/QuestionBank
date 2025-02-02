@@ -21,20 +21,27 @@ const Home = () => {
     setActiveCardId(null);
   };
 
-  useEffect(() => {
-    const fetchAlbumDatas = async () => {
-      try {
-        const datas = await userService.fetchAlbumsByUserId(user.info.uid);
-        setAlbumDatas(datas);
-      } catch (error) {
-        console.error('Album titles fetch error:', error);
-      }
-    };
-
-    fetchAlbumDatas();
+  const fetchAlbumDatas = useCallback(async () => {
+    if (!user.info.uid) {
+      return;
+    }
+    try {
+      const datas = await userService.fetchAlbumsByUserId(user.info.uid);
+      setAlbumDatas(datas);
+    } catch (error) {
+      console.error('Album titles fetch error:', error);
+    }
   }, [user.info.uid]);
 
   useEffect(() => {
+    fetchAlbumDatas();
+  }, [fetchAlbumDatas]);
+
+  useEffect(() => {
+    if (!user.info.uid) {
+      return;
+    }
+
     let updatedData = [];
 
     if (
@@ -42,32 +49,35 @@ const Home = () => {
       albumDatas.length === 0 ||
       albumDatas === Enums.MESSAGE.Errors.AlbumsDontExists
     ) {
-      updatedData = [{id: 'placeholder-1', isPlaceholder: true}];
-      setPaddedData(updatedData);
-      return;
+      updatedData = [{Uid: 'placeholder-1', isPlaceholder: true}];
     } else {
-      updatedData = [...albumDatas];
+      updatedData = albumDatas.filter(item => Object.keys(item).length > 0);
       updatedData.push({
-        id: `placeholder-${updatedData.length + 1}`,
+        Uid: `placeholder-${updatedData.length + 1}`,
         isPlaceholder: true,
       });
-      setPaddedData(updatedData);
-      return;
     }
-  }, [albumDatas]);
+    setPaddedData(updatedData);
+  }, [albumDatas, user.info.uid]);
 
   const handleScrollToIndex = index => {
     if (flatlistRef.current) {
       flatlistRef.current.scrollToIndex({
-        index: Math.floor(index / 2),
+        index: Math.max(0, Math.floor(index / 2)),
         animated: true,
       });
     }
   };
 
-  const handleLongPressOnAlbum = useCallback(id => {
-    setActiveCardId(prevId => (prevId === id ? null : id));
+  const handleLongPressOnAlbum = useCallback(Uid => {
+    setActiveCardId(prevId => (prevId === Uid ? null : Uid));
   }, []);
+
+  const reFetchAlbums = useCallback(() => {
+    fetchAlbumDatas();
+    setActiveCardId(null);
+  }, [fetchAlbumDatas]);
+
   const renderItem = useCallback(
     ({item, index}) => {
       let whichRow = '';
@@ -105,16 +115,17 @@ const Home = () => {
           index={index}
           albumCardRef={cardRef}
           isPlaceholder={item.isPlaceholder}
-          isFlipped={activeCardId === item.id}
+          isFlipped={activeCardId === item.Uid}
           whichLastRow={whichRow}
           handleLongPressOnAlbum={() => {
-            handleLongPressOnAlbum(item.id);
+            handleLongPressOnAlbum(item.Uid);
             handleScrollToIndex(index);
           }}
+          reFetchAlbums={reFetchAlbums}
         />
       );
     },
-    [activeCardId, paddedData, handleLongPressOnAlbum],
+    [activeCardId, paddedData, handleLongPressOnAlbum, reFetchAlbums],
   );
   return (
     <BackgroundContainer>
@@ -129,7 +140,7 @@ const Home = () => {
                 data={paddedData}
                 ref={flatlistRef}
                 numColumns={2}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.Uid}
                 renderItem={renderItem}
                 extraData={activeCardId}
                 showsVerticalScrollIndicator={false}

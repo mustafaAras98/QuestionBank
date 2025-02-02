@@ -13,6 +13,7 @@ const baseStyle = StyleSheet.create({
   InputComp: {
     flex: 1,
     backgroundColor: 'white',
+    paddingLeft: 10,
   },
   Label: {
     position: 'absolute',

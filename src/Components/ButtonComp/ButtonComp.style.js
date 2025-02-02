@@ -6,12 +6,14 @@ const baseStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   Button: {
+    maxHeight: 100,
     justifyContent: 'center',
     verticalAlign: 'middle',
     padding: 8,
     borderStyle: 'solid',
     borderWidth: 2,
     backgroundColor: 'white',
+    elevation: 2,
   },
   ButtonText: {alignSelf: 'center', fontWeight: 600, fontSize: 22},
   RightIcon: {
@@ -31,7 +33,7 @@ export default {
     Button: {
       ...baseStyle.Button,
       backgroundColor: 'red',
-      borderColor: 'maroon',
+      borderRadius: 10,
     },
     ButtonText: {
       ...baseStyle.ButtonText,

@@ -24,6 +24,7 @@ const AlbumCard = forwardRef(
       isFlipped,
       handleLongPressOnAlbum,
       whichLastRow = Enums.FLATLISTROW.Other,
+      reFetchAlbums,
     },
     albumCardRef,
   ) => {
@@ -102,7 +103,7 @@ const AlbumCard = forwardRef(
           {height: itemHeight},
         ]}>
         {isPlaceholder ? (
-          <AlbumCardPlaceholder />
+          <AlbumCardPlaceholder reFetchAlbums={reFetchAlbums} />
         ) : (
           <TouchableWithoutFeedback
             onLongPress={() => {
@@ -121,6 +122,7 @@ const AlbumCard = forwardRef(
                 <AlbumCardFront
                   onLongPress={handleLongPressOnAlbum}
                   albumTitle={albumItem.Title}
+                  albumImageUri={albumItem.ImageURL}
                 />
               </Animated.View>
               <Animated.View
@@ -131,7 +133,12 @@ const AlbumCard = forwardRef(
                   },
                   isFlipped ? styles.ActiveCard : styles.InactiveCard,
                 ]}>
-                <AlbumCardBack onLongPress={handleLongPressOnAlbum} />
+                <AlbumCardBack
+                  isFlipped={isFlipped}
+                  albumItem={albumItem}
+                  onLongPress={handleLongPressOnAlbum}
+                  reFetchAlbums={reFetchAlbums}
+                />
               </Animated.View>
             </View>
           </TouchableWithoutFeedback>
@@ -144,6 +151,7 @@ const AlbumCard = forwardRef(
 export default React.memo(AlbumCard, (prevProps, nextProps) => {
   return (
     prevProps.isFlipped === nextProps.isFlipped &&
-    prevProps.albumItem.id === nextProps.albumItem.id
+    prevProps.albumItem.id === nextProps.albumItem.id &&
+    prevProps.albumItem.Title === nextProps.albumItem.Title
   );
 });

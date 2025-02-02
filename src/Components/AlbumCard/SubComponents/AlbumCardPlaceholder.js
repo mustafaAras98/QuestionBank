@@ -1,17 +1,23 @@
 import {View, Text, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {styles} from '../AlbumCard.style';
+import AlbumCreateModal from '../../AlbumCreateModal/AlbumCreateModal';
 
-const AlbumCardPlaceholder = ({}) => {
+const AlbumCardPlaceholder = ({reFetchAlbums}) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <TouchableOpacity
-      onPress={() => {
-        console.log('Create new Album!');
-      }}
+      onPress={() => setModalVisible(true)}
       style={styles.PlaceholderInnerContainer}>
       <View style={styles.PlaceholderItemButton}>
         <Text style={styles.PlaceholderItemButtonText}>+</Text>
       </View>
+      <AlbumCreateModal
+        reFetchAlbums={reFetchAlbums}
+        modalVisible={modalVisible}
+        setModalVisible={() => setModalVisible(!modalVisible)}
+      />
     </TouchableOpacity>
   );
 };

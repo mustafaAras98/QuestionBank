@@ -2,7 +2,7 @@ import {View, Text, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 import {styles} from '../AlbumCard.style';
 
-const AlbumCardFront = ({albumTitle, onLongPress}) => {
+const AlbumCardFront = ({albumTitle, albumImageUri, onLongPress}) => {
   return (
     <TouchableOpacity
       onLongPress={onLongPress}
@@ -11,10 +11,7 @@ const AlbumCardFront = ({albumTitle, onLongPress}) => {
       }}
       style={styles.InnerContainer}>
       <View style={styles.ImageContainer}>
-        <Image
-          style={styles.Image}
-          source={{uri: 'https://reactnative.dev/img/tiny_logo.png'}}
-        />
+        <Image style={styles.Image} source={{uri: albumImageUri}} />
       </View>
       <View style={styles.TitleContainer}>
         <Text style={styles.Text}>{albumTitle}</Text>

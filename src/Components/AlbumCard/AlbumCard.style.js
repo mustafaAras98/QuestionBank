@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     padding: 1,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
-    filter: 'blur(3px)',
+    filter: 'blur(2px)',
   },
   Image: {
     flex: 1,

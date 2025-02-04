@@ -123,6 +123,7 @@ const AlbumCard = forwardRef(
                   onLongPress={handleLongPressOnAlbum}
                   albumTitle={albumItem.Title}
                   albumImageUri={albumItem.ImageURL}
+                  albumUid={albumItem.Uid}
                 />
               </Animated.View>
               <Animated.View

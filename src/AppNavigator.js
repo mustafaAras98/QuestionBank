@@ -10,6 +10,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignIn from './Screens/SignIn';
 import SignUp from './Screens/SignUp';
 import Home from './Screens/Home';
+import Gallery from './Screens/Gallery';
 import BottomTabNavigator from './Components/BottomTabNavigator';
 
 const AppNavigator = () => {
@@ -44,10 +45,20 @@ const AppNavigator = () => {
       {isAuthenticated ? (
         <>
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen
+            name="Gallery"
+            component={Gallery}
+            initialParams={{albumId: -1}}
+          />
         </>
       ) : (
         <>
           <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen
+            name="Gallery"
+            component={Gallery}
+            initialParams={{albumId: -1}}
+          />
           <Stack.Screen name="SignUp" component={SignUp} />
         </>
       )}

@@ -1,13 +1,15 @@
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 import {styles} from '../AlbumCard.style';
+import {useNavigation} from '@react-navigation/native';
 
-const AlbumCardFront = ({albumTitle, albumImageUri, onLongPress}) => {
+const AlbumCardFront = ({albumTitle, albumImageUri, albumUid, onLongPress}) => {
+  const navigation = useNavigation();
   return (
     <TouchableOpacity
       onLongPress={onLongPress}
       onPress={() => {
-        console.log('Go To Album Page!');
+        navigation.navigate('Gallery', {albumId: albumUid});
       }}
       style={styles.InnerContainer}>
       <View style={styles.ImageContainer}>

@@ -36,11 +36,12 @@ const SignIn = () => {
     authService.signInWithGoogle().then(resultMsg => {
       if (resultMsg !== Enums.MESSAGE.LoginSuccess) {
         setMessage(resultMsg);
+        navigation.navigate('Home');
       } else {
         setMessage('');
       }
     });
-  }, []);
+  }, [navigation]);
   const onForgetPasswordPress = () => {
     authService.forgetPassword(user.Email).then(resultMsg => {
       if (resultMsg === Enums.MESSAGE.ForgetPasswordSucces) {

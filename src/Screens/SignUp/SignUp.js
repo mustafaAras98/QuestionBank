@@ -35,11 +35,12 @@ const SignUp = () => {
     authService.signInWithGoogle().then(resultMsg => {
       if (resultMsg !== Enums.MESSAGE.LoginSuccess) {
         setMessage(resultMsg);
+        navigation.navigate('Home');
       } else {
         setMessage('');
       }
     });
-  }, []);
+  }, [navigation]);
   const handleEmailChange = useCallback(value => {
     userRef.current = {...userRef.current, Email: value};
     setUser(prev => ({...prev, Email: value}));

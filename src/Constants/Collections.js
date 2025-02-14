@@ -16,3 +16,26 @@ export const albumDocByUserIdAndAlbumId = (userId, albumId) => {
     .doc(albumId);
   return albumDocument;
 };
+export const imageCollectionByUserIdAndAlbumId = (userId, albumId) => {
+  const imageDocument = firestore()
+    .collection('Users')
+    .doc(userId)
+    .collection('Albums')
+    .doc(albumId)
+    .collection('Images');
+  return imageDocument;
+};
+export const imageDocByUserIdAndAlbumIdAndImageId = (
+  userId,
+  albumId,
+  imageId,
+) => {
+  const imageDocument = firestore()
+    .collection('Users')
+    .doc(userId)
+    .collection('Albums')
+    .doc(albumId)
+    .collection('Images')
+    .doc(imageId);
+  return imageDocument;
+};

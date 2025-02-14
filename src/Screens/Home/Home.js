@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import BackgroundContainer from '../../Components/BackgroundContainerComponent';
 import {styles} from './Home.style';
 import {useSelector} from 'react-redux';
-import userService from '../../Services/User.Service';
+import albumService from '../../Services/Album.Service';
 import AlbumCard from '../../Components/AlbumCard';
 import {Enums} from '../../Constants/Enums';
 
@@ -26,7 +26,7 @@ const Home = () => {
       return;
     }
     try {
-      const datas = await userService.fetchAlbumsByUserId(user.info.uid);
+      const datas = await albumService.fetchAlbumsByUserId(user.info.uid);
       setAlbumDatas(datas);
     } catch (error) {
       console.error('Album titles fetch error:', error);

@@ -1,0 +1,85 @@
+import React, {useCallback, useRef, useState} from 'react';
+import {View, Text, Image, FlatList, ActivityIndicator} from 'react-native';
+
+import {styles} from './FavoriteFlatlist.style';
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+
+const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
+  const favoriteFlatlistRef = useRef(null);
+  const [containerSize, setContainerSize] = useState({width: 0, height: 0});
+
+  const renderFavoriteImages = useCallback(
+    ({item}) => {
+      return (
+        <View
+          onLayout={event => {
+            const {width, height} = event.nativeEvent.layout;
+            setContainerSize({width, height});
+          }}
+          style={styles.FavoriteImageContainer}>
+          <Image
+            style={[
+              styles.ImageComp,
+              {
+                width: containerSize.width,
+                height: containerSize.height,
+              },
+            ]}
+            source={{uri: item.ImageURL}}
+          />
+          <View style={styles.FlatlistItemTextBackground} />
+          <Text style={styles.FlatlistItemText}>{item.Name}</Text>
+        </View>
+      );
+    },
+    [containerSize],
+  );
+
+  return (
+    <View style={styles.Container}>
+      <View style={styles.FavoriteContainer}>
+        <View style={styles.FavoriteHeader}>
+          <Text style={styles.HeaderText}>Favorite Image</Text>
+          <FontAwesome6
+            style={styles.HeaderIcon}
+            iconStyle="regular"
+            name="heart"
+          />
+        </View>
+        {isLoading ? (
+          <ActivityIndicator
+            style={styles.FlatlistContainer}
+            size="large"
+            color="darkslategrey"
+          />
+        ) : !favoriteImageList || favoriteImageList.length === 0 ? (
+          <View style={styles.NoFavoriteContainer}>
+            <Text style={styles.NoFavoriteText}>
+              There are no favorite images{' '}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.FlatlistContainer}>
+            <FlatList
+              ref={favoriteFlatlistRef}
+              style={styles.Flatlist}
+              data={favoriteImageList}
+              keyExtractor={item => item.Uid}
+              renderItem={renderFavoriteImages}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.FlatlistContentContainer}
+            />
+          </View>
+        )}
+      </View>
+    </View>
+  );
+};
+
+export default React.memo(FavoriteFlatlist, (prevProps, nextProps) => {
+  return (
+    prevProps.favoriteImageList === nextProps.favoriteImageList &&
+    prevProps.isLoading === nextProps.isLoading
+  );
+});

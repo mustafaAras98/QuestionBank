@@ -13,13 +13,20 @@ export const Enums = {
     UserDeleteSuccess: 'User deleted successfully.',
     UserUpdateSuccess: 'User updated successfully.',
     Errors: {
+      ImageIdMissing: 'Image Id information is missing!',
+      NoImageError: 'There are no image on this album',
+      NoFavoriteImageError: 'There are no favorite image on this album',
       UpdateTitleError: 'Firestore can not update title of desired albums',
       DeleteAlbumFirestoreError: 'Firestore can not delete desired albums',
+      DeleteImageFirestoreError: 'Firestore can not delete desired images',
       DeleteAlbumStorageError: 'Firebase storage can not delete desired albums',
       ImageCannotConvertToBlob: 'Image can not convert to blob',
       DeleteAlbumGenericError: 'Album can not be deleted',
+      DeleteImageGenericError: 'Image can not be deleted',
       CreateNewAlbumGenericError: 'New album can not be created',
+      CreateNewImageGenericError: 'New Image can not be created',
       UserIdMissing: 'User ID information is missing!',
+      ImageNameMissing: 'Image Name information is missing!',
       AlbumIdMissing: 'Album ID information is missing!',
       TitleMissing: 'Title information is missing!',
       ImagePathMissing: 'Image Path information is missing!',
@@ -39,6 +46,12 @@ export const Enums = {
       IDTokenError: 'No ID token found',
       FetchAlbumsError:
         'Something went wrong while accessing your albums. Please try again in a few moments.',
+      FetchImagesError:
+        'Something went wrong while accessing your images. Please try again in a few moments.',
+      ImageFavoriteChangeError:
+        'Something went wrong while changing favoritism of photo. Please try again in a few moments.',
+      FetchFavoriteImagesError:
+        'Something went wrong while accessing your favorite images. Please try again in a few moments.',
       AlbumsDontExists: 'User album does not exist',
     },
     Validations: {

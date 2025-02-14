@@ -5,7 +5,7 @@ import {styles} from '../AlbumCard.style';
 import TextInputComp from '../../TextInputComp';
 import {Enums} from '../../../Constants/Enums';
 import ButtonComp from '../../ButtonComp';
-import userService from '../../../Services/User.Service';
+import albumService from '../../../Services/Album.Service';
 import {useSelector} from 'react-redux';
 
 const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
@@ -30,7 +30,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
   const handleDeleteButtonPress = async () => {
     setDeleteLoading(true);
     try {
-      const status = await userService.removeAlbum(albumItem.Uid, userUid);
+      const status = await albumService.removeAlbum(albumItem.Uid, userUid);
       if (status !== Enums.STATUS.Success) {
         throw new Error(`Album creation failed: ${status}`);
       }
@@ -43,7 +43,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
   };
   const handleEditTitlePress = async () => {
     try {
-      const status = await userService.editAlbumTitle(
+      const status = await albumService.editAlbumTitle(
         albumItem.Uid,
         userUid,
         title,

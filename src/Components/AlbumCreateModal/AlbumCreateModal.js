@@ -13,7 +13,7 @@ import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import styles from './AlbumCreateModal.style';
 import TextInputComp from '../TextInputComp';
 import ImagePicker from 'react-native-image-crop-picker';
-import userService from '../../Services/User.Service';
+import albumService from '../../Services/Album.Service';
 import {useSelector} from 'react-redux';
 
 const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
@@ -48,7 +48,7 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
 
     setLoading(true);
     try {
-      const status = await userService.createNewAlbum(
+      const status = await albumService.createNewAlbum(
         userUid,
         title,
         image.path,
@@ -76,7 +76,7 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
       transparent={true}
       visible={modalVisible}
       onRequestClose={() => {
-        setModalVisible();
+        setModalVisible(false);
       }}>
       <View style={styles.CenteredView}>
         <View style={styles.ModalView}>

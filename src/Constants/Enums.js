@@ -5,6 +5,10 @@ export const Enums = {
     Success: 'Success',
     Failure: 'Failure',
   },
+  Lists: {
+    OpenImageList: ['Album', 'Image'],
+  },
+  OpenImageList: {Album: 'Album', Image: 'Image'},
   MESSAGE: {
     LoginSuccess: 'Login successful',
     SignUpSuccess: 'Sign-up successful',
@@ -44,8 +48,14 @@ export const Enums = {
       EmailDontExists:
         'The provided email address does not match any existing user accounts.',
       IDTokenError: 'No ID token found',
+      FetchAlbumError:
+        'Something went wrong while accessing your album. Please try again in a few moments.',
       FetchAlbumsError:
         'Something went wrong while accessing your albums. Please try again in a few moments.',
+      FetchImageNoImageError: 'There are no available image with that token.',
+      FetchImageNoAlbumError: 'There are no available album with that token.',
+      FetchImageError:
+        'Something went wrong while accessing your image. Please try again in a few moments.',
       FetchImagesError:
         'Something went wrong while accessing your images. Please try again in a few moments.',
       ImageFavoriteChangeError:
@@ -53,6 +63,8 @@ export const Enums = {
       FetchFavoriteImagesError:
         'Something went wrong while accessing your favorite images. Please try again in a few moments.',
       AlbumsDontExists: 'User album does not exist',
+      DecryptionError: 'Decryption Error',
+      EncryptionError: 'Encryption Error',
     },
     Validations: {
       EmailValidErrors: 'Email must be valid.',

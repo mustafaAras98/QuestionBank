@@ -5,6 +5,8 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
+  Share,
+  Alert,
 } from 'react-native';
 import React, {useState, useCallback, useRef} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -20,6 +22,9 @@ import {Enums} from '../../Constants/Enums';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import DisplayImageModal from '../../Components/DisplayImageModal';
 import DeleteItemButton from '../../Components/DeleteItemButton';
+import DropdownList from '../../Components/DropdownList';
+import TextInputComp from '../../Components/TextInputComp';
+import Encrypt from '../../Utils/Encrypt';
 
 const Gallery = ({route}) => {
   const user = useSelector(state => state.user);
@@ -32,9 +37,15 @@ const Gallery = ({route}) => {
   const [imagesData, setImagesData] = useState(null);
   const [favoriteImages, setFavoriteImages] = useState(null);
   const [isAddImageModalVisible, setIsAddImageModalVisible] = useState(false);
-
+  const [dropdownValue, setDropdownValue] = useState(null);
+  const [sharedId, setSharedId] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
+  const [showAlbum, setShowAlbum] = useState(false);
+  const [isVisibleError, setIsVisibleError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(false);
+  const [isRenderItemButtonsVisible, setIsRenderItemButtonsVisible] =
+    useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -43,6 +54,7 @@ const Gallery = ({route}) => {
       }
       return () => {
         navigation.setParams({albumId: -1});
+        setShowAlbum(false);
       };
     }, [navigation, fetchData, albumId]),
   );
@@ -86,7 +98,23 @@ const Gallery = ({route}) => {
       />
     );
   };
+  const onShare = async item => {
+    const imageIdEncrpyted = await Encrypt(item.Uid);
+    try {
+      await Share.share({
+        title: 'QuestionBank',
+        message: `Dear User,
 
+Your access code for the image you created on the QuestionBank application is below:
+
+Image Code: ${imageIdEncrpyted})}
+
+You can use this code to log in to your image and access its contents.`,
+      });
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
   const renderItem = ({item}) => {
     return (
       <ReanimatedSwipeable
@@ -100,24 +128,42 @@ const Gallery = ({route}) => {
           onPress={() => {
             setSelectedImage(item);
           }}
+          onLongPress={() => {
+            setIsRenderItemButtonsVisible(!isRenderItemButtonsVisible);
+          }}
           style={styles.FlatlistItemContainer}>
-          <TouchableOpacity
-            onPress={async () => {
-              await albumService.ImageFavoriteStatusChange(
-                user.info.uid,
-                albumId,
-                item.Uid,
-                item.IsFavorite,
-              );
-              reFetchImages();
-            }}
-            style={styles.FlatlistItemFavoriteButtonContainer}>
-            <FontAwesome6
-              style={styles.FlatlistItemFavoriteButton}
-              name="heart"
-              iconStyle={item.IsFavorite ? 'solid' : 'regular'}
-            />
-          </TouchableOpacity>
+          {isRenderItemButtonsVisible && (
+            <View style={styles.FlatlistItemButtonContainer}>
+              <TouchableOpacity
+                onPress={async () => {
+                  await albumService.ImageFavoriteStatusChange(
+                    user.info.uid,
+                    albumId,
+                    item.Uid,
+                    item.IsFavorite,
+                  );
+                  reFetchImages();
+                }}
+                style={styles.FlatlistItemButton}>
+                <FontAwesome6
+                  style={styles.FlatlistItemFavoriteButton}
+                  name="heart"
+                  iconStyle={item.IsFavorite ? 'solid' : 'regular'}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={async () => {
+                  onShare(item);
+                }}
+                style={styles.FlatlistItemButton}>
+                <FontAwesome6
+                  style={styles.FlatlistItemShareButton}
+                  name="share"
+                  iconStyle={'solid'}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
           <Image style={styles.ImageComp} source={{uri: item.ImageURL}} />
           <View style={styles.FlatlistItemNameContainer}>
             <Text style={styles.FlatlistItemNameText}>{item.Name}</Text>
@@ -127,12 +173,91 @@ const Gallery = ({route}) => {
     );
   };
 
+  const renderAlbum = ({item}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          setSelectedImage(item);
+        }}
+        style={styles.FlatlistItemContainer}>
+        <Image style={styles.ImageComp} source={{uri: item.ImageURL}} />
+        <View style={styles.FlatlistItemNameContainer}>
+          <Text style={styles.FlatlistItemNameText}>{item.Name}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const fetchImageSwitch = async () => {
+    switch (dropdownValue) {
+      case Enums.OpenImageList.Album:
+        let images = await albumService.fetchImagesInAlbum(sharedId);
+        if (typeof images === 'object') {
+          setFavoriteImages(images.filter(item => item.IsFavorite));
+          setImagesData(images);
+          setShowAlbum(true);
+          setIsVisibleError(false);
+        } else {
+          setIsVisibleError(true);
+          setErrorMsg(images);
+        }
+        break;
+      case Enums.OpenImageList.Image:
+        const aloneImage = await albumService.fetchImage(sharedId);
+        console.log(aloneImage);
+        if (typeof aloneImage === 'object') {
+          setSelectedImage(aloneImage);
+          setIsVisibleError(false);
+        } else {
+          setIsVisibleError(true);
+          setErrorMsg(aloneImage);
+        }
+        break;
+    }
+  };
+
   return (
     <BackgroundContainer>
       <View style={styles.Container}>
-        {albumId === -1 ? (
+        {albumId === -1 && !showAlbum ? (
           <View style={styles.NoAlbumIdContainer}>
-            <Text style={styles.NoAlbumIdText}>Please select an album</Text>
+            <View style={styles.NoAlbumIdContent}>
+              <DropdownList
+                setValue={setDropdownValue}
+                value={dropdownValue}
+                list={Enums.Lists.OpenImageList}
+              />
+              {dropdownValue && (
+                <TextInputComp
+                  label={dropdownValue}
+                  onChangeValue={setSharedId}
+                  value={sharedId}
+                  placeholder={`${dropdownValue} ID`}
+                  theme={Enums.TEXTINPUT_TYPES.Primary}
+                />
+              )}
+              <TouchableOpacity
+                disabled={dropdownValue === null || sharedId === ''}
+                style={
+                  dropdownValue === null || sharedId === ''
+                    ? styles.NoAlbumButtonDisabled
+                    : styles.NoAlbumButton
+                }
+                onPress={async () => {
+                  fetchImageSwitch();
+                }}>
+                <Text style={styles.NoAlbumButtonText}>
+                  {!dropdownValue
+                    ? 'Select from list'
+                    : `Click to get ${dropdownValue}`}
+                </Text>
+              </TouchableOpacity>
+              {isVisibleError && (
+                <View style={styles.NoAlbumButtonErrorContainer}>
+                  <Text style={styles.NoAlbumButtonErrorText}>{errorMsg}</Text>
+                </View>
+              )}
+            </View>
           </View>
         ) : (
           <View style={styles.AlbumContainer}>
@@ -140,66 +265,76 @@ const Gallery = ({route}) => {
               favoriteImageList={favoriteImages}
               isLoading={imageLoading}
             />
-            <View style={styles.ButtonRowContainer}>
-              <TouchableOpacity
-                style={styles.ImageButton}
-                onPress={() => {
-                  ImagePicker.openCamera({
-                    width: 512,
-                    height: 512,
-                    cropping: true,
-                    compressImageQuality: 0.8,
-                  }).then(returnedImage => {
-                    setImage(returnedImage);
-                    setIsAddImageModalVisible(true);
-                  });
-                }}>
-                <Text style={styles.ImageButtonText}>Open Camera</Text>
-                <FontAwesome6
-                  style={styles.ImageButtonIcon}
-                  name="camera"
-                  iconStyle={'solid'}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.ImageButton}
-                onPress={() => {
-                  ImagePicker.openPicker({
-                    width: 512,
-                    height: 512,
-                    cropping: true,
-                    compressImageQuality: 0.8,
-                  }).then(returnedImage => {
-                    setImage(returnedImage);
-                    setIsAddImageModalVisible(true);
-                  });
-                }}>
-                <Text style={styles.ImageButtonText}>Select Image</Text>
-                <FontAwesome6
-                  style={styles.ImageButtonIcon}
-                  name="file-image"
-                  iconStyle={'solid'}
-                />
-              </TouchableOpacity>
-              {selectedImage && (
-                <DisplayImageModal
-                  isModalVisible={!!selectedImage}
-                  setSelectedImage={() => setSelectedImage(null)}
-                  imageUrl={selectedImage.ImageURL}
-                  title={selectedImage.Name}
-                />
-              )}
-              <AddImageModal
-                albumId={albumId}
-                userId={user.info.uid}
-                image={image}
-                isModalVisible={isAddImageModalVisible}
-                setModalVisible={() =>
-                  setIsAddImageModalVisible(!isAddImageModalVisible)
-                }
-                reFetch={reFetchImages}
+            {showAlbum && selectedImage && (
+              <DisplayImageModal
+                isModalVisible={!!selectedImage}
+                setSelectedImage={setSelectedImage}
+                imageUrl={selectedImage.ImageURL}
+                title={selectedImage.Name}
               />
-            </View>
+            )}
+            {!showAlbum && (
+              <View style={styles.ButtonRowContainer}>
+                <TouchableOpacity
+                  style={styles.ImageButton}
+                  onPress={() => {
+                    ImagePicker.openCamera({
+                      width: 512,
+                      height: 512,
+                      cropping: true,
+                      compressImageQuality: 0.8,
+                    }).then(returnedImage => {
+                      setImage(returnedImage);
+                      setIsAddImageModalVisible(true);
+                    });
+                  }}>
+                  <Text style={styles.ImageButtonText}>Open Camera</Text>
+                  <FontAwesome6
+                    style={styles.ImageButtonIcon}
+                    name="camera"
+                    iconStyle={'solid'}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.ImageButton}
+                  onPress={() => {
+                    ImagePicker.openPicker({
+                      width: 512,
+                      height: 512,
+                      cropping: true,
+                      compressImageQuality: 0.8,
+                    }).then(returnedImage => {
+                      setImage(returnedImage);
+                      setIsAddImageModalVisible(true);
+                    });
+                  }}>
+                  <Text style={styles.ImageButtonText}>Select Image</Text>
+                  <FontAwesome6
+                    style={styles.ImageButtonIcon}
+                    name="file-image"
+                    iconStyle={'solid'}
+                  />
+                </TouchableOpacity>
+                <AddImageModal
+                  albumId={albumId}
+                  userId={user.info.uid}
+                  image={image}
+                  isModalVisible={isAddImageModalVisible}
+                  setModalVisible={() =>
+                    setIsAddImageModalVisible(!isAddImageModalVisible)
+                  }
+                  reFetch={reFetchImages}
+                />
+                {selectedImage && (
+                  <DisplayImageModal
+                    isModalVisible={!!selectedImage}
+                    setSelectedImage={setSelectedImage}
+                    imageUrl={selectedImage.ImageURL}
+                    title={selectedImage.Name}
+                  />
+                )}
+              </View>
+            )}
             <View style={styles.GlassContainer}>
               {imageLoading ? (
                 <ActivityIndicator size="large" color="darkslategrey" />
@@ -217,7 +352,7 @@ const Gallery = ({route}) => {
                   ref={flatlistRef}
                   numColumns={2}
                   keyExtractor={item => item.Uid}
-                  renderItem={renderItem}
+                  renderItem={showAlbum ? renderAlbum : renderItem}
                   columnWrapperStyle={styles.FlatlistColumnWrapperStyle}
                   contentContainerStyle={styles.FlatlistContentContainerStyle}
                 />
@@ -226,6 +361,14 @@ const Gallery = ({route}) => {
           </View>
         )}
       </View>
+      {selectedImage && albumId === -1 && (
+        <DisplayImageModal
+          isModalVisible={!!selectedImage}
+          setSelectedImage={setSelectedImage}
+          imageUrl={selectedImage.ImageURL}
+          title={selectedImage.Name}
+        />
+      )}
     </BackgroundContainer>
   );
 };

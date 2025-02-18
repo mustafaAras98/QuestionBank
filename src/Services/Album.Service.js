@@ -9,6 +9,7 @@ import {
 import {Enums} from '../Constants/Enums';
 import firestore, {addDoc, updateDoc} from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+import Decrypt from '../Utils/Decyrpt';
 
 const fetchAlbumTitlesByUserId = async userId => {
   if (!userId) {
@@ -230,6 +231,87 @@ const fetchImages = async (userId, albumId) => {
   }
 };
 
+const fetchImage = async imageId => {
+  if (!imageId) {
+    return Enums.MESSAGE.Errors.ImageIdMissing;
+  }
+
+  try {
+    const imageIdDecyrpt = await Decrypt(imageId);
+    let imageQuery = firestore()
+      .collectionGroup('Images')
+      .where('Uid', '==', imageIdDecyrpt)
+      .limit(1);
+
+    let image;
+    await imageQuery.get().then(querySnapshot => {
+      if (!querySnapshot) {
+        return Enums.MESSAGE.Errors.FetchImageNoImageError;
+      }
+      querySnapshot.forEach(doc => {
+        if (doc.data()) {
+          image = doc.data();
+        }
+      });
+    });
+
+    if (!image) {
+      return Enums.MESSAGE.Errors.FetchImageNoImageError;
+    }
+    return image;
+  } catch (error) {
+    if (error.message === Enums.MESSAGE.Errors.DecryptionError) {
+      return Enums.MESSAGE.Errors.FetchImageNoImageError;
+    }
+    return Enums.MESSAGE.Errors.FetchImageError;
+  }
+};
+
+const fetchImagesInAlbum = async albumId => {
+  if (!albumId) {
+    return Enums.MESSAGE.Errors.AlbumIdMissing;
+  }
+  try {
+    const albumIdDecrypt = await Decrypt(albumId);
+    let albumQuery = firestore()
+      .collectionGroup('Albums')
+      .where('Uid', '==', albumIdDecrypt)
+      .limit(1);
+
+    let albumRef;
+    await albumQuery.get().then(querySnapshot => {
+      if (querySnapshot.size === 0) {
+        throw new Error(Enums.MESSAGE.Errors.FetchImageNoAlbumError);
+      }
+      querySnapshot.forEach(doc => {
+        if (doc.data()) {
+          albumRef = doc.ref;
+        }
+      });
+    });
+
+    if (albumRef === null) {
+      return Enums.MESSAGE.Errors.FetchImageNoAlbumError;
+    }
+
+    const imagesSnapshot = await albumRef.collection('Images').get();
+    if (imagesSnapshot.empty) {
+      return Enums.MESSAGE.Errors.FetchImageNoAlbumError;
+    }
+
+    const images = imagesSnapshot.docs.map(doc => ({
+      ...doc.data(),
+    }));
+
+    return images;
+  } catch (error) {
+    if (error.message === Enums.MESSAGE.Errors.DecryptionError) {
+      return Enums.MESSAGE.Errors.FetchImageNoImageError;
+    }
+    return Enums.MESSAGE.Errors.FetchAlbumError;
+  }
+};
+
 const fetchFavoriteImages = async (userId, albumId) => {
   if (!userId) {
     return Enums.MESSAGE.Errors.UserIdMissing;
@@ -293,6 +375,7 @@ const ImageFavoriteStatusChange = async (
     return Enums.MESSAGE.Errors.ImageFavoriteChangeError;
   }
 };
+
 const deleteImage = async (userUid, albumUid, imageUid) => {
   if (!userUid) {
     return Enums.MESSAGE.Errors.UserIdMissing;
@@ -328,11 +411,13 @@ const deleteImage = async (userUid, albumUid, imageUid) => {
 const albumService = {
   fetchAlbumsByUserId,
   fetchAlbumTitlesByUserId,
+  fetchImagesInAlbum,
   createNewAlbum,
   removeAlbum,
   editAlbumTitle,
   addNewImage,
   fetchImages,
+  fetchImage,
   fetchFavoriteImages,
   ImageFavoriteStatusChange,
   deleteImage,

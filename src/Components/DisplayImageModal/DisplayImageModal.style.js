@@ -2,7 +2,8 @@ import {Dimensions, StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   CenteredView: {
-    flex: 1,
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -49,10 +50,11 @@ export const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   CloseButton: {
+    flex: 1,
+    position: 'absolute',
     width: Dimensions.get('screen').width * 0.7 * 0.15,
     height: Dimensions.get('screen').width * 0.7 * 0.15,
     borderRadius: Dimensions.get('screen').width * 0.7 * 0.15 * 0.5,
-    position: 'absolute',
     top: -10,
     right: -10,
     padding: 10,
@@ -60,6 +62,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1,
   },
   CloseText: {color: 'white', fontWeight: '800', fontSize: 18},
 });

@@ -7,6 +7,7 @@ const baseStyle = StyleSheet.create({
   },
   Button: {
     maxHeight: 100,
+    minHeight: '50',
     justifyContent: 'center',
     verticalAlign: 'middle',
     padding: 8,
@@ -15,7 +16,12 @@ const baseStyle = StyleSheet.create({
     backgroundColor: 'white',
     elevation: 2,
   },
-  ButtonText: {alignSelf: 'center', fontWeight: 600, fontSize: 22},
+  ButtonText: {
+    alignSelf: 'center',
+    fontWeight: 600,
+    fontSize: 22,
+    marginRight: 2,
+  },
   RightIcon: {
     alignSelf: 'center',
     justifyContent: 'flex-end',

@@ -28,8 +28,8 @@ const baseStyle = StyleSheet.create({
     borderTopWidth: 1,
   },
   leftIcon: {
-    fontSize: 24,
-    padding: 18,
+    fontSize: 18,
+    paddingLeft: 18,
   },
   rightIcon: {
     alignSelf: 'center',

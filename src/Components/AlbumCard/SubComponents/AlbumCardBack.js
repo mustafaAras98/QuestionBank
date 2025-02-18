@@ -1,4 +1,10 @@
-import {View, ActivityIndicator, TouchableOpacity, Alert} from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+  Alert,
+  Share,
+} from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 import {styles} from '../AlbumCard.style';
@@ -7,6 +13,7 @@ import {Enums} from '../../../Constants/Enums';
 import ButtonComp from '../../ButtonComp';
 import albumService from '../../../Services/Album.Service';
 import {useSelector} from 'react-redux';
+import Encrypt from '../../../Utils/Encrypt';
 
 const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
   const [title, setTitle] = useState('');
@@ -41,6 +48,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
       setDeleteLoading(false);
     }
   };
+
   const handleEditTitlePress = async () => {
     try {
       const status = await albumService.editAlbumTitle(
@@ -56,6 +64,25 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
       Alert.alert('Error', error.message || 'Something went wrong.');
     }
   };
+
+  const onShare = async () => {
+    const albumIdEncrpyted = await Encrypt(albumItem.Uid.toString());
+    try {
+      await Share.share({
+        title: 'QuestionBank',
+        message: `Dear User,
+
+Your access code for the album you created on the QuestionBank application is below:
+
+Album Code: ${albumIdEncrpyted}
+
+You can use this code to log in to your album and access its contents.`,
+      });
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
   return (
     <TouchableOpacity
       onLongPress={() => {
@@ -79,21 +106,34 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
             }}
           />
         </View>
-        <View style={styles.AlbumCardBackItemContainer}>
-          {deleteLoading ? (
-            <ActivityIndicator size="large" color="red" />
-          ) : (
+        <View style={styles.AlbumCardBackButtonContainer}>
+          <View style={styles.AlbumCardBackButton}>
+            {deleteLoading ? (
+              <ActivityIndicator size="large" color="red" />
+            ) : (
+              <ButtonComp
+                theme={Enums.BUTTON_TYPES.Delete}
+                buttonText="Delete"
+                onPress={async () => {
+                  await handleDeleteButtonPress();
+                  reFetchAlbums();
+                }}
+                rightLogoName="trash-can"
+                contentSize={12}
+              />
+            )}
+          </View>
+          <View style={styles.AlbumCardBackButton}>
             <ButtonComp
-              theme={Enums.BUTTON_TYPES.Delete}
-              buttonText="Delete"
+              theme={Enums.BUTTON_TYPES.Secondary}
+              buttonText="Share"
               onPress={async () => {
-                await handleDeleteButtonPress();
-                reFetchAlbums();
+                await onShare();
               }}
-              rightLogoName="trash-can"
-              contentSize={16}
+              rightLogoName="share"
+              contentSize={12}
             />
-          )}
+          </View>
         </View>
       </View>
     </TouchableOpacity>

@@ -48,8 +48,8 @@ export const styles = StyleSheet.create({
   Text: {fontWeight: 'bold', color: 'Black', textAlign: 'center'},
   AlbumCardBackContainer: {
     flex: 1,
-    justifyContent: 'space-around',
-    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   AlbumCardBackItemContainer: {
     flex: 1,
@@ -57,7 +57,16 @@ export const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     maxHeight: '35%',
+    width: '100%',
   },
+  AlbumCardBackButtonContainer: {
+    flex: 2,
+    width: '100%',
+    flexDirection: 'row',
+    maxHeight: '20%',
+    justifyContent: 'space-around',
+  },
+  AlbumCardBackButton: {width: '45%'},
   DeleteContainer: {
     flex: 1,
     borderRadius: 10,

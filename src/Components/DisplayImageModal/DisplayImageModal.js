@@ -14,23 +14,22 @@ const DisplayImageModal = ({
       animationType="fade"
       transparent={true}
       visible={isModalVisible}
-      onRequestClose={setSelectedImage}>
+      onRequestClose={() => setSelectedImage(null)}>
       <View style={styles.CenteredView}>
         <View style={styles.ModalView}>
           <TouchableOpacity
             style={styles.CloseButton}
-            onPress={setSelectedImage}>
+            onPress={() => setSelectedImage(null)}>
             <Text style={styles.CloseText}>X</Text>
           </TouchableOpacity>
           <View style={styles.Header}>
             <Text style={styles.Title}>{title}</Text>
           </View>
-          {!imageUrl ||
-            (imageUrl !== null && (
-              <View style={styles.ImageContainer}>
-                <Image style={styles.ImageComp} source={{uri: imageUrl}} />
-              </View>
-            ))}
+          {imageUrl && (
+            <View style={styles.ImageContainer}>
+              <Image style={styles.ImageComp} source={{uri: imageUrl}} />
+            </View>
+          )}
         </View>
       </View>
     </Modal>

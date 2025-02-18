@@ -4,10 +4,12 @@ import {Enums} from '../Constants/Enums';
 
 async function Encrypt(data) {
   try {
+    const encrpytKey = ENCYRPT_KEY;
+    const ivKey = IV_KEY;
     const encrypted = await Aes.encrypt(
       data,
-      ENCYRPT_KEY,
-      IV_KEY,
+      encrpytKey,
+      ivKey,
       'aes-256-cbc',
     );
     return encrypted;

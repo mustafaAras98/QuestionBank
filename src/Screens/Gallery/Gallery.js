@@ -204,7 +204,6 @@ You can use this code to log in to your image and access its contents.`,
         break;
       case Enums.OpenImageList.Image:
         const aloneImage = await albumService.fetchImage(sharedId);
-        console.log(aloneImage);
         if (typeof aloneImage === 'object') {
           setSelectedImage(aloneImage);
           setIsVisibleError(false);

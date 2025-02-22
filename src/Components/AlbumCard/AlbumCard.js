@@ -153,6 +153,7 @@ export default React.memo(AlbumCard, (prevProps, nextProps) => {
   return (
     prevProps.isFlipped === nextProps.isFlipped &&
     prevProps.albumItem.id === nextProps.albumItem.id &&
-    prevProps.albumItem.Title === nextProps.albumItem.Title
+    prevProps.albumItem.Title === nextProps.albumItem.Title &&
+    prevProps.albumItem.ImageURL === nextProps.albumItem.ImageURL
   );
 });

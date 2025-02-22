@@ -118,6 +118,7 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                       width: 512,
                       height: 512,
                       cropping: true,
+                      freeStyleCropEnabled: true,
                       compressImageQuality: 0.8,
                     }).then(returnedImage => {
                       setIsImageTaken(true);
@@ -138,6 +139,7 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                       compressImageMaxHeight: 512,
                       compressImageMaxWidth: 512,
                       cropping: true,
+                      freeStyleCropEnabled: true,
                       compressImageQuality: 0.8,
                     }).then(returnedImage => {
                       setIsImageTaken(true);

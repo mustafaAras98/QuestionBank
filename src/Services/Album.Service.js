@@ -111,13 +111,23 @@ const removeAlbum = async (albumUid, userUid) => {
       .listAll()
       .then(dir => {
         dir.items.forEach(fileRef => fileRef.delete());
-        dir.prefixes.forEach(folderRef => folderRef.delete());
+        dir.prefixes.forEach(async folderRef => {
+          await folderRef.listAll().then(folderDir => {
+            folderDir.items.forEach(item => item.delete());
+          });
+          folderRef.delete();
+        });
       })
       .catch(error => {
         console.error(error);
         return Enums.MESSAGE.Errors.DeleteAlbumStorageError;
       });
     const albumCollection = albumDocByUserIdAndAlbumId(userUid, albumUid);
+    const imagesRef = albumCollection.collection('Images');
+
+    await imagesRef.get().then(querySnapshot => {
+      Promise.all(querySnapshot.docs.map(d => d.ref.delete()));
+    });
     await albumCollection.delete().catch(error => {
       console.error(error);
       return Enums.MESSAGE.Errors.DeleteAlbumFirestoreError;
@@ -383,7 +393,7 @@ const deleteImage = async (userUid, albumUid, imageUid) => {
   if (!albumUid) {
     return Enums.MESSAGE.Errors.AlbumIdMissing;
   }
-  if (!albumUid) {
+  if (!imageUid) {
     return Enums.MESSAGE.Errors.ImageIdMissing;
   }
   try {
@@ -408,6 +418,46 @@ const deleteImage = async (userUid, albumUid, imageUid) => {
   }
 };
 
+const editCoverImage = async (userUid, albumUid, imagePath) => {
+  if (!userUid) {
+    return Enums.MESSAGE.Errors.UserIdMissing;
+  }
+  if (!albumUid) {
+    return Enums.MESSAGE.Errors.AlbumIdMissing;
+  }
+  if (!imagePath) {
+    return Enums.MESSAGE.Errors.ImagePathMissing;
+  }
+  try {
+    const albumRef = storage().ref(`Users/${userUid}/Albums/${albumUid}/`);
+    await albumRef.listAll().then(dir => {
+      dir.items.forEach(fileRef => fileRef.delete());
+    });
+
+    const albumDoc = albumDocByUserIdAndAlbumId(userUid, albumUid);
+
+    const response = await fetch(
+      Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath,
+    );
+    const imageBlob = await response.blob();
+    if (!imageBlob) {
+      return Enums.MESSAGE.Errors.ImageCannotConvertToBlob;
+    }
+    const imageRef = storage().ref(
+      `Users/${userUid}/Albums/${albumUid}/${Date.now()}.jpg`,
+    );
+    await imageRef.put(imageBlob);
+    const url = await storage().ref(imageRef.path).getDownloadURL();
+    await updateDoc(albumDoc, {
+      ImageURL: url,
+    });
+    return Enums.STATUS.Success;
+  } catch (error) {
+    console.error(error);
+    return Enums.MESSAGE.Errors.DeleteImageGenericError;
+  }
+};
+
 const albumService = {
   fetchAlbumsByUserId,
   fetchAlbumTitlesByUserId,
@@ -421,6 +471,7 @@ const albumService = {
   fetchFavoriteImages,
   ImageFavoriteStatusChange,
   deleteImage,
+  editCoverImage,
 };
 
 export default albumService;

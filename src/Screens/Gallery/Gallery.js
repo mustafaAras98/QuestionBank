@@ -98,6 +98,7 @@ const Gallery = ({route}) => {
       />
     );
   };
+
   const onShare = async item => {
     const imageIdEncrpyted = await Encrypt(item.Uid);
     try {
@@ -115,6 +116,7 @@ You can use this code to log in to your image and access its contents.`,
       Alert.alert(error.message);
     }
   };
+
   const renderItem = ({item}) => {
     return (
       <ReanimatedSwipeable
@@ -281,6 +283,7 @@ You can use this code to log in to your image and access its contents.`,
                       width: 512,
                       height: 512,
                       cropping: true,
+                      freeStyleCropEnabled: true,
                       compressImageQuality: 0.8,
                     }).then(returnedImage => {
                       setImage(returnedImage);
@@ -301,6 +304,7 @@ You can use this code to log in to your image and access its contents.`,
                       width: 512,
                       height: 512,
                       cropping: true,
+                      freeStyleCropEnabled: true,
                       compressImageQuality: 0.8,
                     }).then(returnedImage => {
                       setImage(returnedImage);

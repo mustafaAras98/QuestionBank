@@ -15,6 +15,7 @@ import albumService from '../../../Services/Album.Service';
 import {useSelector} from 'react-redux';
 import Encrypt from '../../../Utils/Encrypt';
 import ImageCropPicker from 'react-native-image-crop-picker';
+import urlSafeEncode from '../../../Utils/UrlSafeEncode';
 
 const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
   const [title, setTitle] = useState('');
@@ -68,16 +69,18 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
 
   const onShare = async () => {
     const albumIdEncrpyted = await Encrypt(albumItem.Uid.toString());
+    const encryptedHex = urlSafeEncode.encodeUrlSafeBase64(albumIdEncrpyted);
+
+    const deepLink = `questionbank://Gallery/${encryptedHex}/${Enums.OpenImageList.Album}`;
+
     try {
       await Share.share({
         title: 'QuestionBank',
         message: `Dear User,
 
-Your access code for the album you created on the QuestionBank application is below:
-
-Album Code: ${albumIdEncrpyted}
-
-You can use this code to log in to your album and access its contents.`,
+Your access code for the shared content on the QuestionBank application is below:
+${deepLink}
+You can use this URL to access its content.`,
       });
     } catch (error) {
       Alert.alert(error.message);

@@ -8,7 +8,7 @@ import {
   Share,
   Alert,
 } from 'react-native';
-import React, {useState, useCallback, useRef} from 'react';
+import React, {useState, useCallback, useRef, useEffect} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import BackgroundContainer from '../../Components/BackgroundContainerComponent/BackgroundContainer';
 import {styles} from './Gallery.style';
@@ -25,12 +25,15 @@ import DeleteItemButton from '../../Components/DeleteItemButton';
 import DropdownList from '../../Components/DropdownList';
 import TextInputComp from '../../Components/TextInputComp';
 import Encrypt from '../../Utils/Encrypt';
+import urlSafeEncode from '../../Utils/UrlSafeEncode';
 
 const Gallery = ({route}) => {
   const user = useSelector(state => state.user);
-
   const navigation = useNavigation();
   let {albumId} = route.params;
+  let {sharedType} = route.params;
+  let {sharedUid} = route.params;
+
   const flatlistRef = useRef(null);
 
   const [image, setImage] = useState(null);
@@ -52,12 +55,25 @@ const Gallery = ({route}) => {
       if (albumId !== -1) {
         fetchData();
       }
+
       return () => {
         navigation.setParams({albumId: -1});
         setShowAlbum(false);
       };
     }, [navigation, fetchData, albumId]),
   );
+
+  useEffect(() => {
+    if (!sharedType) {
+      return;
+    }
+    if (!sharedUid) {
+      return;
+    }
+    let decodedId = urlSafeEncode.decodeUrlSafeBase64(sharedUid);
+    setDropdownValue(sharedType);
+    setSharedId(decodedId);
+  }, [sharedType, sharedUid, albumId]);
 
   const reFetchImages = () => {
     fetchData();
@@ -101,16 +117,18 @@ const Gallery = ({route}) => {
 
   const onShare = async item => {
     const imageIdEncrpyted = await Encrypt(item.Uid);
+    const encryptedHex = urlSafeEncode.encodeUrlSafeBase64(imageIdEncrpyted);
+
+    const deepLink = `questionbank://Gallery/${encryptedHex}/${Enums.OpenImageList.Image}`;
+
     try {
       await Share.share({
         title: 'QuestionBank',
         message: `Dear User,
 
-Your access code for the image you created on the QuestionBank application is below:
-
-Image Code: ${imageIdEncrpyted})}
-
-You can use this code to log in to your image and access its contents.`,
+Your access code for the shared content on the QuestionBank application is below:
+${deepLink}
+You can use this URL to access its content.`,
       });
     } catch (error) {
       Alert.alert(error.message);
@@ -213,6 +231,9 @@ You can use this code to log in to your image and access its contents.`,
           setIsVisibleError(true);
           setErrorMsg(aloneImage);
         }
+        break;
+      default:
+        console.log(dropdownValue);
         break;
     }
   };

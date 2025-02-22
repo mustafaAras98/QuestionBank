@@ -9,10 +9,19 @@ import {Provider} from 'react-redux';
 import AppNavigator from './AppNavigator';
 
 const App = () => {
+  const linking = {
+    prefixes: ['questionbank://'],
+    config: {
+      screens: {
+        Gallery: 'Gallery/:sharedUid/:sharedType',
+      },
+    },
+  };
+
   return (
     <GestureHandlerRootView>
       <Provider store={store}>
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
           <AppNavigator />
         </NavigationContainer>
       </Provider>

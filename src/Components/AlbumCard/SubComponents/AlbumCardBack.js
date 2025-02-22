@@ -76,11 +76,8 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
     try {
       await Share.share({
         title: 'QuestionBank',
-        message: `Dear User,
-
-Your access code for the shared content on the QuestionBank application is below:
-${deepLink}
-You can use this URL to access its content.`,
+        message: deepLink,
+        url: deepLink,
       });
     } catch (error) {
       Alert.alert(error.message);

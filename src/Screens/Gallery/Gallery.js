@@ -48,7 +48,7 @@ const Gallery = ({route}) => {
   const [isVisibleError, setIsVisibleError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(false);
   const [isRenderItemButtonsVisible, setIsRenderItemButtonsVisible] =
-    useState(false);
+    useState(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -149,10 +149,10 @@ You can use this URL to access its content.`,
             setSelectedImage(item);
           }}
           onLongPress={() => {
-            setIsRenderItemButtonsVisible(!isRenderItemButtonsVisible);
+            setIsRenderItemButtonsVisible(item);
           }}
           style={styles.FlatlistItemContainer}>
-          {isRenderItemButtonsVisible && (
+          {isRenderItemButtonsVisible === item && (
             <View style={styles.FlatlistItemButtonContainer}>
               <TouchableOpacity
                 onPress={async () => {

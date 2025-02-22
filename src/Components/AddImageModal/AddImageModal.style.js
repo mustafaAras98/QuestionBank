@@ -76,11 +76,12 @@ const styles = StyleSheet.create({
   FormContainer: {
     flex: 1,
     width: '100%',
+    gap: 10,
     padding: 10,
     justifyContent: 'space-around',
   },
   ImageContainer: {
-    flex: 1,
+    flex: 2.5,
     width: '100%',
     height: '100%',
     justifyContent: 'center',

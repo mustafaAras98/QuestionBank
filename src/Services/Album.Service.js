@@ -8,7 +8,7 @@ import {
 } from '../Constants/Collections';
 import {Enums} from '../Constants/Enums';
 import firestore, {addDoc, updateDoc} from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
+import storage, {deleteObject} from '@react-native-firebase/storage';
 import Decrypt from '../Utils/Decyrpt';
 
 const fetchAlbumTitlesByUserId = async userId => {
@@ -110,12 +110,16 @@ const removeAlbum = async (albumUid, userUid) => {
     await albumRef
       .listAll()
       .then(dir => {
-        dir.items.forEach(fileRef => fileRef.delete());
         dir.prefixes.forEach(async folderRef => {
+          deleteObject(storage().ref(folderRef.fullPath));
           await folderRef.listAll().then(folderDir => {
-            folderDir.items.forEach(item => item.delete());
+            folderDir.items.forEach(item =>
+              deleteObject(storage().ref(item.fullPath)),
+            );
           });
-          folderRef.delete();
+        });
+        dir.items.forEach(async fileRef => {
+          deleteObject(storage().ref(fileRef.fullPath));
         });
       })
       .catch(error => {
@@ -316,7 +320,7 @@ const fetchImagesInAlbum = async albumId => {
     return images;
   } catch (error) {
     if (error.message === Enums.MESSAGE.Errors.DecryptionError) {
-      return Enums.MESSAGE.Errors.FetchImageNoImageError;
+      return Enums.MESSAGE.Errors.FetchImageNoAlbumError;
     }
     return Enums.MESSAGE.Errors.FetchAlbumError;
   }

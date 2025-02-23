@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
+  Container: {flex: 1},
   TabBarStyle: {
     position: 'absolute',
     height: '8%',
@@ -20,9 +21,5 @@ export const styles = StyleSheet.create({
     backgroundColor: 'darkslategrey',
     justifyContent: 'center',
     alignSelf: 'center',
-  },
-  SignOutButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

@@ -34,11 +34,11 @@ const SignIn = () => {
   }, [navigation]);
   const handleGoogleSignIn = useCallback(() => {
     authService.signInWithGoogle().then(resultMsg => {
-      if (resultMsg !== Enums.MESSAGE.LoginSuccess) {
-        setMessage(resultMsg);
+      if (resultMsg === Enums.MESSAGE.LoginSuccess) {
+        setMessage('');
         navigation.navigate('Home');
       } else {
-        setMessage('');
+        setMessage(resultMsg);
       }
     });
   }, [navigation]);

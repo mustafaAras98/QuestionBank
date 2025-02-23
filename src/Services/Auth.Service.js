@@ -13,9 +13,10 @@ import firestore, {
   where,
 } from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import albumService from './Album.Service';
 
 import {WEB_CLIENT_ID} from '@env';
-import {usersCollection} from '../Constants/Collections';
+import {albumDocsByUserId, usersCollection} from '../Constants/Collections';
 import {Enums} from '../Constants/Enums';
 import User from '../Models/User';
 
@@ -94,6 +95,27 @@ const logout = async () => {
     return error.code;
   }
 };
+const deleteUser = async () => {
+  try {
+    const userId = auth.currentUser.uid;
+    if (userId) {
+      const albumCollection = albumDocsByUserId(userId);
+      const albumDocs = await albumCollection.get();
+      albumDocs.forEach(async albumSnapshot => {
+        if (!albumSnapshot) {
+          return;
+        }
+        await albumService.removeAlbum(albumSnapshot.data().Uid, userId);
+      });
+
+      await usersCollection.doc(userId).delete();
+      await auth.currentUser.delete();
+      await auth.signOut();
+    }
+  } catch (error) {
+    return error.code;
+  }
+};
 const forgetPassword = async email => {
   let emailTrimmed = email.trim();
   let emailValidate = ValidateEmailSchema(emailTrimmed);
@@ -119,6 +141,11 @@ const signInWithGoogle = async () => {
   try {
     await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
     const signInResult = await GoogleSignin.signIn();
+
+    if (!signInResult || (!signInResult.data && !signInResult.idToken)) {
+      return Enums.MESSAGE.Errors.SignInCancelled;
+    }
+
     let idToken = signInResult.data.idToken;
     if (!idToken) {
       idToken = signInResult.idToken;
@@ -194,6 +221,7 @@ const authService = {
   signInWithEmail,
   signInWithGoogle,
   logout,
+  deleteUser,
   forgetPassword,
 };
 

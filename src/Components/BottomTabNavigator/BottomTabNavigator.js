@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View} from 'react-native';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useSelector} from 'react-redux';
-import authService from '../../Services/Auth.Service';
 
 import SignIn from '../../Screens/SignIn';
 import SignUp from '../../Screens/SignUp';
@@ -12,14 +11,15 @@ import Gallery from '../../Screens/Gallery';
 
 import {styles} from './BottomTabNavigator.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import ProfileTabs from './SubComponents/ProfileTabs';
 
 const TabIcons = ({route, focused}) => {
   const icons = {
     Home: 'house',
     SignIn: 'user',
     SignUp: 'user-plus',
-    SignOut: 'right-from-bracket',
     Gallery: 'images',
+    Profile: 'user-gear',
   };
   return (
     <FontAwesome6
@@ -29,62 +29,71 @@ const TabIcons = ({route, focused}) => {
     />
   );
 };
-const SignOutComponent = () => {
+
+const NullComp = () => {
   return null;
 };
+
 const BottomTabNavigator = () => {
   const Tab = createBottomTabNavigator();
   const isAuthenticated = useSelector(state => state.user.isAuthenticated);
+  const [profileVisible, setProfileVisible] = useState(false);
 
   return (
-    <Tab.Navigator
-      screenOptions={({route}) => ({
-        animation: 'shift',
-        tabBarStyle: styles.TabBarStyle,
-        tabBarItemStyle: styles.TabBarItemStyle,
-        tabBarIconStyle: styles.TabBarIconStyle,
-        headerShown: false,
-        tabBarShowLabel: false,
-        // eslint-disable-next-line react/no-unstable-nested-components
-        tabBarIcon: ({focused}) => {
-          return (
-            <View>
-              <TabIcons route={route} focused={focused} />
-              {focused ? <View style={styles.FocusedIndicator} /> : null}
-            </View>
-          );
-        },
-      })}>
-      {isAuthenticated ? (
-        <>
-          <Tab.Screen name="Home" component={Home} />
-          <Tab.Screen
-            name="Gallery"
-            component={Gallery}
-            initialParams={{albumId: -1}}
-          />
-          <Tab.Screen
-            name="SignOut"
-            component={SignOutComponent}
-            listeners={{
-              tabPress: e => {
-                authService.logout();
-              },
-            }}
-          />
-        </>
-      ) : (
-        <>
-          <Tab.Screen name="SignIn" component={SignIn} />
-          <Tab.Screen
-            name="Gallery"
-            component={Gallery}
-            initialParams={{albumId: -1}}
-          />
-          <Tab.Screen name="SignUp" component={SignUp} />
-        </>
+    <View style={styles.Container}>
+      <Tab.Navigator
+        screenOptions={({route}) => ({
+          animation: 'shift',
+          tabBarStyle: styles.TabBarStyle,
+          tabBarItemStyle: styles.TabBarItemStyle,
+          tabBarIconStyle: styles.TabBarIconStyle,
+          headerShown: false,
+          tabBarShowLabel: false,
+          // eslint-disable-next-line react/no-unstable-nested-components
+          tabBarIcon: ({focused}) => {
+            return (
+              <View>
+                <TabIcons route={route} focused={focused} />
+                {focused ? <View style={styles.FocusedIndicator} /> : null}
+              </View>
+            );
+          },
+        })}>
+        {isAuthenticated ? (
+          <>
+            <Tab.Screen name="Home" component={Home} />
+            <Tab.Screen
+              name="Gallery"
+              component={Gallery}
+              initialParams={{albumId: -1}}
+            />
+            <Tab.Screen
+              name="Profile"
+              component={NullComp}
+              listeners={{
+                tabPress: e => {
+                  e.preventDefault();
+                  setProfileVisible(!profileVisible);
+                },
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <Tab.Screen name="SignIn" component={SignIn} />
+            <Tab.Screen
+              name="Gallery"
+              component={Gallery}
+              initialParams={{albumId: -1}}
+            />
+            <Tab.Screen name="SignUp" component={SignUp} />
+          </>
+        )}
+      </Tab.Navigator>
+      {profileVisible && (
+        <ProfileTabs setProfileVisible={() => setProfileVisible(false)} />
       )}
-    </Tab.Navigator>
+    </View>
   );
 };
 

@@ -18,6 +18,7 @@ export const Enums = {
     UserUpdateSuccess: 'User updated successfully.',
     Errors: {
       ImageIdMissing: 'Image Id information is missing!',
+      SignInCancelled: 'User cancelled google sign in process',
       NoImageError: 'There are no image on this album',
       NoFavoriteImageError: 'There are no favorite image on this album',
       UpdateTitleError: 'Firestore can not update title of desired albums',

@@ -1,50 +1,73 @@
 import {StyleSheet} from 'react-native';
 
 const baseStyle = StyleSheet.create({
-  Container: {
+  ButtonContainer: {
     flex: 1,
-    justifyContent: 'center',
-  },
-  Button: {
-    maxHeight: 100,
-    minHeight: '50',
-    justifyContent: 'center',
-    verticalAlign: 'middle',
-    padding: 8,
+    flexDirection: 'row',
+    height: '100%',
+    width: '100%',
+    paddingHorizontal: '5%',
     borderStyle: 'solid',
-    borderWidth: 2,
-    backgroundColor: 'white',
-    elevation: 2,
+    borderWidth: 1.5,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   ButtonText: {
-    alignSelf: 'center',
-    fontWeight: 600,
-    fontSize: 22,
-    marginRight: 2,
+    width: '100%',
+    height: '100%',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontWeight: 700,
+    fontSize: 18,
   },
   RightIcon: {
-    alignSelf: 'center',
-    justifyContent: 'flex-end',
-  },
-  ButtonIconContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: '100%',
+    height: '100%',
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
 });
 
 export default {
-  primary: StyleSheet.create({...baseStyle}),
+  primary: StyleSheet.create({
+    ...baseStyle,
+    ButtonContainer: {
+      ...baseStyle.ButtonContainer,
+      backgroundColor: 'white',
+      shadowColor: '#000',
+    },
+    ButtonText: {
+      ...baseStyle.ButtonText,
+      flex: 5,
+      color: 'black',
+    },
+    RightIcon: {
+      ...baseStyle.RightIcon,
+      flex: 2,
+      color: 'black',
+    },
+  }),
   delete: StyleSheet.create({
     ...baseStyle,
-    Button: {
-      ...baseStyle.Button,
+    ButtonContainer: {
+      ...baseStyle.ButtonContainer,
       backgroundColor: 'red',
-      borderRadius: 10,
+      shadowColor: 'red',
     },
     ButtonText: {
       ...baseStyle.ButtonText,
       color: 'white',
+      flex: 5,
     },
-    RightIcon: {color: 'white'},
+    RightIcon: {
+      ...baseStyle.RightIcon,
+      flex: 2,
+      color: 'white',
+    },
   }),
 };

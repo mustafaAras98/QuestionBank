@@ -10,6 +10,7 @@ import {Enums} from '../Constants/Enums';
 import firestore, {addDoc, updateDoc} from '@react-native-firebase/firestore';
 import storage, {deleteObject} from '@react-native-firebase/storage';
 import Decrypt from '../Utils/Decyrpt';
+import urlSafeEncode from '../Utils/UrlSafeEncode';
 
 const fetchAlbumTitlesByUserId = async userId => {
   if (!userId) {
@@ -150,7 +151,7 @@ const editAlbumTitle = async (albumUid, userUid, newTitle) => {
   if (!albumUid) {
     return Enums.MESSAGE.Errors.AlbumIdMissing;
   }
-  if (!newTitle) {
+  if (!newTitle.trim()) {
     return Enums.MESSAGE.Errors.TitleMissing;
   }
   try {
@@ -251,7 +252,8 @@ const fetchImage = async imageId => {
   }
 
   try {
-    const imageIdDecyrpt = await Decrypt(imageId);
+    const decodedId = await urlSafeEncode.decodeUrlSafeBase64(imageId);
+    const imageIdDecyrpt = await Decrypt(decodedId);
     let imageQuery = firestore()
       .collectionGroup('Images')
       .where('Uid', '==', imageIdDecyrpt)
@@ -286,7 +288,8 @@ const fetchImagesInAlbum = async albumId => {
     return Enums.MESSAGE.Errors.AlbumIdMissing;
   }
   try {
-    const albumIdDecrypt = await Decrypt(albumId);
+    const decodedId = await urlSafeEncode.decodeUrlSafeBase64(albumId);
+    const albumIdDecrypt = await Decrypt(decodedId);
     let albumQuery = firestore()
       .collectionGroup('Albums')
       .where('Uid', '==', albumIdDecrypt)

@@ -1,11 +1,11 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   Container: {flex: 1},
   TabBarStyle: {
     position: 'absolute',
-    height: '8%',
-    bottom: 10,
+    height: Dimensions.get('screen').height * 0.08,
+    bottom: Dimensions.get('screen').height * 0.02,
     marginHorizontal: '4%',
     alignItems: 'center',
   },

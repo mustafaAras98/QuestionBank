@@ -1,7 +1,9 @@
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
-import {styles} from '../AlbumCard.style';
+
 import {useNavigation} from '@react-navigation/native';
+
+import {styles} from './AlbumCardFront.style';
 
 const AlbumCardFront = ({albumTitle, albumImageUri, albumUid, onLongPress}) => {
   const navigation = useNavigation();
@@ -16,7 +18,9 @@ const AlbumCardFront = ({albumTitle, albumImageUri, albumUid, onLongPress}) => {
         <Image style={styles.Image} source={{uri: albumImageUri}} />
       </View>
       <View style={styles.TitleContainer}>
-        <Text style={styles.Text}>{albumTitle}</Text>
+        <Text adjustsFontSizeToFit style={styles.Text}>
+          {albumTitle}
+        </Text>
       </View>
     </TouchableOpacity>
   );

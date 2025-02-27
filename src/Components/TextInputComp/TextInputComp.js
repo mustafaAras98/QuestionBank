@@ -16,20 +16,25 @@ const TextInputComp = ({
   theme,
   isPassword = false,
   iconStyle = 'solid',
-  fontSizeParam = 14,
   rightLogoOnPress,
+  multiline = false,
 }) => {
   const [showPassword, setShowPassword] = useState(true);
   const currentStyle = styles[theme] || styles[Enums.TEXTINPUT_TYPES.Primary];
+  const hasRightLogo = rightLogoName !== 'None' && !isPassword;
+  const flexValue = hasRightLogo || isPassword ? 4 : 5;
 
   return (
     <View style={currentStyle.TextInputContainer}>
-      <Text style={[currentStyle.Label, {fontSize: fontSizeParam}]}>
-        {label}
-      </Text>
+      {label && (
+        <Text adjustsFontSizeToFit style={currentStyle.Label}>
+          {label}
+        </Text>
+      )}
       {leftLogoName !== 'None' && (
         <FontAwesome6
-          style={currentStyle.leftIcon}
+          adjustsFontSizeToFit
+          style={currentStyle.LeftIcon}
           name={leftLogoName}
           iconStyle={iconStyle}
         />
@@ -39,13 +44,15 @@ const TextInputComp = ({
         onChangeText={onChangeValue}
         value={value}
         maxLength={maxLength}
-        style={currentStyle.InputComp}
+        style={[currentStyle.InputComp, {flex: flexValue}]}
         secureTextEntry={isPassword && !showPassword}
+        multiline={multiline}
       />
-      {rightLogoName !== 'None' && (
+      {hasRightLogo && (
         <TouchableOpacity onPress={rightLogoOnPress}>
           <FontAwesome6
-            style={currentStyle.rightIcon}
+            adjustsFontSizeToFit
+            style={currentStyle.RightIcon}
             iconStyle={iconStyle}
             name={rightLogoName}
           />
@@ -53,7 +60,8 @@ const TextInputComp = ({
       )}
       {isPassword && (
         <FontAwesome6
-          style={currentStyle.rightIcon}
+          adjustsFontSizeToFit
+          style={currentStyle.RightIcon}
           iconStyle={iconStyle}
           name={showPassword ? 'eye-slash' : 'eye'}
           onPress={() => setShowPassword(!showPassword)}

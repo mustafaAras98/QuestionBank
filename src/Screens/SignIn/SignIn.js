@@ -25,23 +25,25 @@ const SignIn = () => {
       if (resultMsg === Enums.MESSAGE.LoginSuccess) {
         setMessage('');
         setUser({...currentUserRef, Password: ''});
-        navigation.navigate('Home');
+        navigation.navigate('BottomTabNavigator', {screen: 'Home'});
       } else {
         setMessage(resultMsg);
         setUser({...currentUserRef, Password: ''});
       }
     });
   }, [navigation]);
+
   const handleGoogleSignIn = useCallback(() => {
     authService.signInWithGoogle().then(resultMsg => {
       if (resultMsg === Enums.MESSAGE.LoginSuccess) {
         setMessage('');
-        navigation.navigate('Home');
+        navigation.navigate('BottomTabNavigator', {screen: 'Home'});
       } else {
         setMessage(resultMsg);
       }
     });
   }, [navigation]);
+
   const onForgetPasswordPress = () => {
     authService.forgetPassword(user.Email).then(resultMsg => {
       if (resultMsg === Enums.MESSAGE.ForgetPasswordSucces) {
@@ -56,10 +58,12 @@ const SignIn = () => {
       }
     });
   };
+
   const handleEmailChange = useCallback(value => {
     userRef.current = {...userRef.current, Email: value};
     setUser(prev => ({...prev, Email: value}));
   }, []);
+
   const handlePasswordChange = useCallback(value => {
     userRef.current = {...userRef.current, Password: value};
     setUser(prev => ({...prev, Password: value}));
@@ -91,7 +95,12 @@ const SignIn = () => {
           <TouchableOpacity
             onPress={onForgetPasswordPress}
             style={styles.ForgotPasswordButton}>
-            <Text style={styles.ForgotPasswordText}>Forgot Password?</Text>
+            <Text
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+              style={styles.ForgotPasswordText}>
+              Forgot Password?
+            </Text>
           </TouchableOpacity>
           <ButtonComp
             theme={Enums.BUTTON_TYPES.Primary}
@@ -101,7 +110,9 @@ const SignIn = () => {
         </View>
         {message !== Enums.STATUS.Success && message !== '' && (
           <View style={styles.FailedMessageContainer}>
-            <Text style={styles.MessageText}>{message}</Text>
+            <Text adjustsFontSizeToFit style={styles.MessageText}>
+              {message}
+            </Text>
           </View>
         )}
         <View style={styles.Seperator}>
@@ -117,9 +128,10 @@ const SignIn = () => {
           />
         </View>
         <View style={styles.NavigateRegisterContainer}>
-          <Text style={styles.NavigateRegisterText}>
+          <Text adjustsFontSizeToFit style={styles.NavigateRegisterText}>
             Don't have an account?{' '}
             <Text
+              adjustsFontSizeToFit
               onPress={() => navigation.navigate('SignUp')}
               style={styles.NavigateRegisterButton}>
               Sign Up

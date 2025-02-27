@@ -7,25 +7,30 @@ import {
   ActivityIndicator,
   Share,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import React, {useState, useCallback, useRef, useEffect} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import BackgroundContainer from '../../Components/BackgroundContainerComponent/BackgroundContainer';
-import {styles} from './Gallery.style';
-import albumService from '../../Services/Album.Service';
-import {useSelector} from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
-import FavoriteFlatlist from '../../Components/FavoriteFlatlist';
-import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-import AddImageModal from '../../Components/AddImageModal';
-import {Enums} from '../../Constants/Enums';
+import {useSelector} from 'react-redux';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import DisplayImageModal from '../../Components/DisplayImageModal';
+
+import BackgroundContainer from '../../Components/BackgroundContainerComponent/BackgroundContainer';
+import FavoriteFlatlist from '../../Components/FavoriteFlatlist';
+import AddImageModal from '../../Components/Modals/AddImageModal';
+import DisplayImageModal from '../../Components/Modals/DisplayImageModal';
 import DeleteItemButton from '../../Components/DeleteItemButton';
 import DropdownList from '../../Components/DropdownList';
 import TextInputComp from '../../Components/TextInputComp';
-import Encrypt from '../../Utils/Encrypt';
+
+import albumService from '../../Services/Album.Service';
+
 import urlSafeEncode from '../../Utils/UrlSafeEncode';
+import Encrypt from '../../Utils/Encrypt';
+
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import {Enums} from '../../Constants/Enums';
+import {styles} from './Gallery.style';
 
 const Gallery = ({route}) => {
   const user = useSelector(state => state.user);
@@ -49,6 +54,29 @@ const Gallery = ({route}) => {
   const [errorMsg, setErrorMsg] = useState(false);
   const [isRenderItemButtonsVisible, setIsRenderItemButtonsVisible] =
     useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    if (albumId === -1 && showAlbum) {
+      let images = await albumService.fetchImagesInAlbum(sharedId);
+      if (typeof images === 'object') {
+        setFavoriteImages(images.filter(item => item.IsFavorite));
+        setImagesData(images);
+        setShowAlbum(true);
+        setIsVisibleError(false);
+      } else {
+        setIsVisibleError(true);
+        setErrorMsg(images);
+      }
+    }
+
+    if (albumId !== -1) {
+      await fetchData();
+    }
+
+    setRefreshing(false);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -59,20 +87,19 @@ const Gallery = ({route}) => {
       return () => {
         navigation.setParams({albumId: -1});
         setShowAlbum(false);
+        setSharedId('');
+        setDropdownValue(null);
+        setErrorMsg(null);
+        setIsVisibleError(false);
       };
     }, [navigation, fetchData, albumId]),
   );
 
   useEffect(() => {
-    if (!sharedType) {
-      return;
+    if (sharedType && sharedUid) {
+      setDropdownValue(sharedType);
+      setSharedId(sharedUid);
     }
-    if (!sharedUid) {
-      return;
-    }
-    let decodedId = urlSafeEncode.decodeUrlSafeBase64(sharedUid);
-    setDropdownValue(sharedType);
-    setSharedId(decodedId);
   }, [sharedType, sharedUid, albumId]);
 
   const reFetchImages = () => {
@@ -80,12 +107,13 @@ const Gallery = ({route}) => {
   };
 
   const fetchData = useCallback(async () => {
-    setImageLoading(true);
     if (albumId === -1) {
       setImagesData(null);
       setImageLoading(false);
       return;
     }
+
+    setImageLoading(true);
     try {
       const images = await albumService.fetchImages(user.info.uid, albumId);
       if (images !== Enums.MESSAGE.Errors.NoImageError) {
@@ -230,7 +258,6 @@ const Gallery = ({route}) => {
         }
         break;
       default:
-        console.log(dropdownValue);
         break;
     }
   };
@@ -240,21 +267,25 @@ const Gallery = ({route}) => {
       <View style={styles.Container}>
         {albumId === -1 && !showAlbum ? (
           <View style={styles.NoAlbumIdContainer}>
-            <View style={styles.NoAlbumIdContent}>
+            <View style={styles.DropdownlistContainer}>
               <DropdownList
                 setValue={setDropdownValue}
                 value={dropdownValue}
                 list={Enums.Lists.OpenImageList}
               />
-              {dropdownValue && (
+            </View>
+            {dropdownValue && (
+              <View style={styles.SharedIdContainer}>
                 <TextInputComp
-                  label={dropdownValue}
                   onChangeValue={setSharedId}
                   value={sharedId}
                   placeholder={`${dropdownValue} ID`}
                   theme={Enums.TEXTINPUT_TYPES.Primary}
+                  multiline={true}
                 />
-              )}
+              </View>
+            )}
+            <View style={styles.NoAlbumButtonContainer}>
               <TouchableOpacity
                 disabled={dropdownValue === null || sharedId === ''}
                 style={
@@ -271,12 +302,16 @@ const Gallery = ({route}) => {
                     : `Click to get ${dropdownValue}`}
                 </Text>
               </TouchableOpacity>
-              {isVisibleError && (
-                <View style={styles.NoAlbumButtonErrorContainer}>
-                  <Text style={styles.NoAlbumButtonErrorText}>{errorMsg}</Text>
-                </View>
-              )}
             </View>
+            {isVisibleError && (
+              <View style={styles.NoAlbumButtonErrorContainer}>
+                <Text
+                  adjustsFontSizeToFit
+                  style={styles.NoAlbumButtonErrorText}>
+                  {errorMsg}
+                </Text>
+              </View>
+            )}
           </View>
         ) : (
           <View style={styles.AlbumContainer}>
@@ -308,7 +343,9 @@ const Gallery = ({route}) => {
                       setIsAddImageModalVisible(true);
                     });
                   }}>
-                  <Text style={styles.ImageButtonText}>Open Camera</Text>
+                  <Text adjustsFontSizeToFit style={styles.ImageButtonText}>
+                    {'Take\nPhoto'}
+                  </Text>
                   <FontAwesome6
                     style={styles.ImageButtonIcon}
                     name="camera"
@@ -329,7 +366,9 @@ const Gallery = ({route}) => {
                       setIsAddImageModalVisible(true);
                     });
                   }}>
-                  <Text style={styles.ImageButtonText}>Select Image</Text>
+                  <Text adjustsFontSizeToFit style={styles.ImageButtonText}>
+                    {'Select\nImage'}
+                  </Text>
                   <FontAwesome6
                     style={styles.ImageButtonIcon}
                     name="file-image"
@@ -363,7 +402,7 @@ const Gallery = ({route}) => {
                   imagesData === Enums.MESSAGE.Errors.NoImageError) ||
                 !imagesData ||
                 imagesData.length === 0 ? (
-                <Text style={styles.NoImageText}>
+                <Text adjustsFontSizeToFit style={styles.NoImageText}>
                   {Enums.MESSAGE.Errors.NoImageError}
                 </Text>
               ) : (
@@ -376,6 +415,12 @@ const Gallery = ({route}) => {
                   renderItem={showAlbum ? renderAlbum : renderItem}
                   columnWrapperStyle={styles.FlatlistColumnWrapperStyle}
                   contentContainerStyle={styles.FlatlistContentContainerStyle}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={handleRefresh}
+                    />
+                  }
                 />
               )}
             </View>

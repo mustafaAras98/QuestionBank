@@ -24,31 +24,35 @@ const SignUp = () => {
       if (resultMsg === Enums.MESSAGE.SignUpSuccess) {
         setMessage('');
         setUser({...currentUserRef, Password: ''});
-        navigation.navigate('Home');
+        navigation.navigate('BottomTabNavigator', {screen: 'Home'});
       } else {
         setMessage(resultMsg);
         setUser({...currentUserRef, Password: ''});
       }
     });
   }, [navigation]);
+
   const handleGoogleSignIn = useCallback(() => {
     authService.signInWithGoogle().then(resultMsg => {
       if (resultMsg === Enums.MESSAGE.LoginSuccess) {
-        navigation.navigate('Home');
+        navigation.navigate('BottomTabNavigator', {screen: 'Home'});
         setMessage('');
       } else {
         setMessage(resultMsg);
       }
     });
   }, [navigation]);
+
   const handleEmailChange = useCallback(value => {
     userRef.current = {...userRef.current, Email: value};
     setUser(prev => ({...prev, Email: value}));
   }, []);
+
   const handleUsernameChange = useCallback(value => {
     userRef.current = {...userRef.current, Username: value};
     setUser(prev => ({...prev, Username: value}));
   }, []);
+
   const handlePasswordChange = useCallback(value => {
     userRef.current = {...userRef.current, Password: value};
     setUser(prev => ({...prev, Password: value}));
@@ -94,12 +98,14 @@ const SignUp = () => {
         </View>
         {message !== Enums.STATUS.Success && message !== '' && (
           <View style={styles.FailedMessageContainer}>
-            <Text style={styles.MessageText}>{message}</Text>
+            <Text adjustsFontSizeToFit style={styles.MessageText}>
+              {message}
+            </Text>
           </View>
         )}
         <View style={styles.Seperator}>
           <View style={styles.SeperatorLine} />
-          <Text style={styles.SeperatorText}>OR</Text>
+          <Text adjustsFontSizeToFitstyle={styles.SeperatorText}>OR</Text>
           <View style={styles.SeperatorLine} />
         </View>
         <View style={styles.OptionalRegisterButtonContainer}>
@@ -110,9 +116,10 @@ const SignUp = () => {
           />
         </View>
         <View style={styles.NavigateRegisterContainer}>
-          <Text style={styles.NavigateRegisterText}>
+          <Text adjustsFontSizeToFit style={styles.NavigateRegisterText}>
             Already have an account?{' '}
             <Text
+              adjustsFontSizeToFit
               onPress={() => navigation.navigate('SignIn')}
               style={styles.NavigateRegisterButton}>
               Sign In

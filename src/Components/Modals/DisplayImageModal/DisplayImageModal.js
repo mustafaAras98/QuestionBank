@@ -20,10 +20,12 @@ const DisplayImageModal = ({
           <TouchableOpacity
             style={styles.CloseButton}
             onPress={() => setSelectedImage(null)}>
-            <Text style={styles.CloseText}>X</Text>
+            <Text adjustsFontSizeToFit style={styles.CloseText}>
+              X
+            </Text>
           </TouchableOpacity>
           <View style={styles.Header}>
-            <Text style={styles.Title}>{title}</Text>
+            <Text adjustsFontSizeToFit style={styles.Title}>{title}</Text>
           </View>
           {imageUrl && (
             <View style={styles.ImageContainer}>

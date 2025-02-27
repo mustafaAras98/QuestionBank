@@ -1,17 +1,27 @@
 import React, {useCallback, useRef, useState} from 'react';
-import {View, Text, Image, FlatList, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 
 import {styles} from './FavoriteFlatlist.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import DisplayImageModal from '../Modals/DisplayImageModal';
 
 const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
   const favoriteFlatlistRef = useRef(null);
   const [containerSize, setContainerSize] = useState({width: 0, height: 0});
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const renderFavoriteImages = useCallback(
     ({item}) => {
       return (
-        <View
+        <TouchableOpacity
+          onPress={() => setSelectedImage(item)}
           onLayout={event => {
             const {width, height} = event.nativeEvent.layout;
             setContainerSize({width, height});
@@ -27,9 +37,15 @@ const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
             ]}
             source={{uri: item.ImageURL}}
           />
-          <View style={styles.FlatlistItemTextBackground} />
-          <Text style={styles.FlatlistItemText}>{item.Name}</Text>
-        </View>
+          <View style={styles.FlatlistItemTextBackground}>
+            <Text
+              minimumFontScale={0.8}
+              adjustsFontSizeToFit
+              style={styles.FlatlistItemText}>
+              {item.Name}
+            </Text>
+          </View>
+        </TouchableOpacity>
       );
     },
     [containerSize],
@@ -39,8 +55,11 @@ const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
     <View style={styles.Container}>
       <View style={styles.FavoriteContainer}>
         <View style={styles.FavoriteHeader}>
-          <Text style={styles.HeaderText}>Favorite Image</Text>
+          <Text adjustsFontSizeToFit style={styles.HeaderText}>
+            Favorite Image
+          </Text>
           <FontAwesome6
+            adjustsFontSizeToFit
             style={styles.HeaderIcon}
             iconStyle="regular"
             name="heart"
@@ -54,7 +73,7 @@ const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
           />
         ) : !favoriteImageList || favoriteImageList.length === 0 ? (
           <View style={styles.NoFavoriteContainer}>
-            <Text style={styles.NoFavoriteText}>
+            <Text adjustsFontSizeToFit style={styles.NoFavoriteText}>
               There are no favorite images{' '}
             </Text>
           </View>
@@ -71,6 +90,14 @@ const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
               contentContainerStyle={styles.FlatlistContentContainer}
             />
           </View>
+        )}
+        {selectedImage && (
+          <DisplayImageModal
+            isModalVisible={!!selectedImage}
+            setSelectedImage={setSelectedImage}
+            imageUrl={selectedImage.ImageURL}
+            title={selectedImage.Name}
+          />
         )}
       </View>
     </View>

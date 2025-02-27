@@ -1,4 +1,9 @@
-import {View, FlatList, TouchableWithoutFeedback} from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableWithoutFeedback,
+  RefreshControl,
+} from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import BackgroundContainer from '../../Components/BackgroundContainerComponent';
 import {styles} from './Home.style';
@@ -6,9 +11,11 @@ import {useSelector} from 'react-redux';
 import albumService from '../../Services/Album.Service';
 import AlbumCard from '../../Components/AlbumCard';
 import {Enums} from '../../Constants/Enums';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Home = () => {
   const user = useSelector(state => state.user);
+  const userId = user.info?.uid;
 
   const flatlistRef = useRef(null);
   const cardRef = useRef(null);
@@ -16,39 +23,73 @@ const Home = () => {
   const [albumDatas, setAlbumDatas] = useState([]);
   const [paddedData, setPaddedData] = useState([]);
   const [activeCardId, setActiveCardId] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handlePressOutside = () => {
-    setActiveCardId(null);
-  };
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        handlePressOutside();
+      };
+    }, [handlePressOutside]),
+  );
 
   const fetchAlbumDatas = useCallback(async () => {
-    if (!user.info.uid) {
+    if (!userId) {
       return;
     }
+
     try {
-      const datas = await albumService.fetchAlbumsByUserId(user.info.uid);
+      const datas = await albumService.fetchAlbumsByUserId(userId);
       setAlbumDatas(datas);
     } catch (error) {
       console.error('Album titles fetch error:', error);
     }
-  }, [user.info.uid]);
+  }, [userId]);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchAlbumDatas();
+    setRefreshing(false);
+  }, [fetchAlbumDatas]);
+
+  const handlePressOutside = useCallback(() => {
+    setActiveCardId(null);
+  }, []);
+
+  const handleLongPressOnAlbum = useCallback(uid => {
+    setActiveCardId(prevId => (prevId === uid ? null : uid));
+  }, []);
+
+  const handleScrollToIndex = useCallback(index => {
+    if (flatlistRef.current) {
+      flatlistRef.current.scrollToIndex({
+        index: Math.max(0, Math.floor(index / 2)),
+        animated: true,
+      });
+    }
+  }, []);
+
+  const reFetchAlbums = useCallback(() => {
+    fetchAlbumDatas();
+    setActiveCardId(null);
+  }, [fetchAlbumDatas]);
 
   useEffect(() => {
     fetchAlbumDatas();
   }, [fetchAlbumDatas]);
 
   useEffect(() => {
-    if (!user.info.uid) {
+    if (!userId) {
       return;
     }
 
     let updatedData = [];
-
-    if (
+    const isAlbumsEmpty =
       !albumDatas ||
       albumDatas.length === 0 ||
-      albumDatas === Enums.MESSAGE.Errors.AlbumsDontExists
-    ) {
+      albumDatas === Enums.MESSAGE.Errors.AlbumsDontExists;
+
+    if (isAlbumsEmpty) {
       updatedData = [{Uid: 'placeholder-1', isPlaceholder: true}];
     } else {
       updatedData = albumDatas.filter(item => Object.keys(item).length > 0);
@@ -57,58 +98,39 @@ const Home = () => {
         isPlaceholder: true,
       });
     }
+
     setPaddedData(updatedData);
-  }, [albumDatas, user.info.uid]);
+  }, [albumDatas, userId]);
 
-  const handleScrollToIndex = index => {
-    if (flatlistRef.current) {
-      flatlistRef.current.scrollToIndex({
-        index: Math.max(0, Math.floor(index / 2)),
-        animated: true,
-      });
+  const getRowPosition = useCallback((index, totalItems) => {
+    const rowNumber = Math.round(totalItems / 2);
+    const indexRowNumber = Math.floor(index / 2) + 1;
+
+    if (totalItems > 4) {
+      const positionFromEnd = rowNumber - indexRowNumber;
+
+      if (positionFromEnd === 0) {
+        return Enums.FLATLISTROW.Last;
+      }
+      if (positionFromEnd === 1) {
+        return Enums.FLATLISTROW.SecondToLast;
+      }
+      return Enums.FLATLISTROW.Other;
+    } else {
+      if (indexRowNumber === 1) {
+        return Enums.FLATLISTROW.Other;
+      }
+      if (indexRowNumber === 2) {
+        return Enums.FLATLISTROW.SecondToLast;
+      }
+      return Enums.FLATLISTROW.Last;
     }
-  };
-
-  const handleLongPressOnAlbum = useCallback(Uid => {
-    setActiveCardId(prevId => (prevId === Uid ? null : Uid));
   }, []);
-
-  const reFetchAlbums = useCallback(() => {
-    fetchAlbumDatas();
-    setActiveCardId(null);
-  }, [fetchAlbumDatas]);
 
   const renderItem = useCallback(
     ({item, index}) => {
-      let whichRow = '';
-      const rowNumber = Math.round(paddedData.length / 2);
-      const indexRowNumber = Math.floor(index / 2) + 1;
+      const whichRow = getRowPosition(index, paddedData.length);
 
-      if (paddedData.length > 4) {
-        switch (rowNumber - indexRowNumber) {
-          case 0:
-            whichRow = Enums.FLATLISTROW.Last;
-            break;
-          case 1:
-            whichRow = Enums.FLATLISTROW.SecondToLast;
-            break;
-          default:
-            whichRow = Enums.FLATLISTROW.Other;
-            break;
-        }
-      } else {
-        switch (indexRowNumber) {
-          case 1:
-            whichRow = Enums.FLATLISTROW.Other;
-            break;
-          case 2:
-            whichRow = Enums.FLATLISTROW.SecondToLast;
-            break;
-          default:
-            whichRow = Enums.FLATLISTROW.Last;
-            break;
-        }
-      }
       return (
         <AlbumCard
           albumItem={item}
@@ -125,8 +147,16 @@ const Home = () => {
         />
       );
     },
-    [activeCardId, paddedData, handleLongPressOnAlbum, reFetchAlbums],
+    [
+      activeCardId,
+      paddedData,
+      handleLongPressOnAlbum,
+      handleScrollToIndex,
+      reFetchAlbums,
+      getRowPosition,
+    ],
   );
+
   return (
     <BackgroundContainer>
       <TouchableWithoutFeedback
@@ -145,9 +175,13 @@ const Home = () => {
                 extraData={activeCardId}
                 showsVerticalScrollIndicator={false}
                 columnWrapperStyle={styles.ColumnWrapperStyle}
-                onScrollBeginDrag={() => {
-                  setActiveCardId(null);
-                }}
+                onScrollBeginDrag={handlePressOutside}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
               />
             </View>
           </View>

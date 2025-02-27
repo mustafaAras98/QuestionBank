@@ -17,17 +17,20 @@ const DropdownList = ({setValue, value, list}) => {
 
   const renderItem = ({item}) => (
     <TouchableOpacity style={styles.Item} onPress={() => handleItemPress(item)}>
-      <Text style={styles.ItemText}>{item}</Text>
+      <Text adjustsFontSizeToFit style={styles.ItemText}>
+        {item}
+      </Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.Container}>
       <TouchableOpacity onPress={toggleDropdown} style={styles.SelectBox}>
-        <Text style={styles.SelectText}>
+        <Text adjustsFontSizeToFit style={styles.SelectText}>
           {value ? value : 'Lütfen Seçiniz'}
         </Text>
         <FontAwesome6
+          adjustsFontSizeToFit
           style={styles.Icon}
           name="angle-down"
           iconStyle={'solid'}

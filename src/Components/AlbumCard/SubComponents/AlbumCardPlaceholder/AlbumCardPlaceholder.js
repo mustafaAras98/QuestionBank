@@ -1,7 +1,9 @@
 import {View, Text, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
-import {styles} from '../AlbumCard.style';
-import AlbumCreateModal from '../../AlbumCreateModal/AlbumCreateModal';
+
+import AlbumCreateModal from '../../../Modals/AlbumCreateModal';
+
+import {styles} from './AlbumCardPlaceholder.styles';
 
 const AlbumCardPlaceholder = ({reFetchAlbums}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -11,7 +13,9 @@ const AlbumCardPlaceholder = ({reFetchAlbums}) => {
       onPress={() => setModalVisible(true)}
       style={styles.PlaceholderInnerContainer}>
       <View style={styles.PlaceholderItemButton}>
-        <Text style={styles.PlaceholderItemButtonText}>+</Text>
+        <Text adjustsFontSizeToFit style={styles.PlaceholderItemButtonText}>
+          +
+        </Text>
       </View>
       <AlbumCreateModal
         reFetchAlbums={reFetchAlbums}

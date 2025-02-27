@@ -13,7 +13,11 @@ const App = () => {
     prefixes: ['questionbank://'],
     config: {
       screens: {
-        Gallery: 'Gallery/:sharedUid/:sharedType',
+        BottomTabNavigator: {
+          screens: {
+            Gallery: 'Gallery/:sharedUid/:sharedType',
+          },
+        },
       },
     },
   };

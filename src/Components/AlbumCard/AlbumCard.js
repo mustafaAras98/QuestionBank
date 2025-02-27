@@ -6,11 +6,12 @@ import {
   Dimensions,
 } from 'react-native';
 
-import {styles} from './AlbumCard.style';
-import AlbumCardPlaceholder from './SubComponents/AlbumCardPlaceholder';
-import AlbumCardFront from './SubComponents/AlbumCardFront';
-import AlbumCardBack from './SubComponents/AlbumCardBack';
 import {Enums} from '../../Constants/Enums';
+import {styles} from './AlbumCard.style';
+
+import AlbumCardPlaceholder from './SubComponents/AlbumCardPlaceholder/AlbumCardPlaceholder';
+import AlbumCardFront from './SubComponents/AlbumCardFront/AlbumCardFront';
+import AlbumCardBack from './SubComponents/AlbumCardBack/AlbumCardBack';
 
 const {width, height} = Dimensions.get('window');
 const itemHeight = (Dimensions.get('window').height * 0.7) / 3.2;

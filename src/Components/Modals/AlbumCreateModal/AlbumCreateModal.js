@@ -8,13 +8,16 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import {Enums} from '../../Constants/Enums';
+
+import {useSelector} from 'react-redux';
+import ImagePicker from 'react-native-image-crop-picker';
+import albumService from '../../../Services/Album.Service';
+
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import styles from './AlbumCreateModal.style';
-import TextInputComp from '../TextInputComp';
-import ImagePicker from 'react-native-image-crop-picker';
-import albumService from '../../Services/Album.Service';
-import {useSelector} from 'react-redux';
+import {Enums} from '../../../Constants/Enums';
+
+import TextInputComp from '../../TextInputComp';
 
 const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
   const [title, setTitle] = useState('');
@@ -89,7 +92,9 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
               setIsImageTaken(false);
               ImagePicker.clean();
             }}>
-            <Text style={styles.CloseText}>X</Text>
+            <Text adjustsFontSizeToFits style={styles.CloseText}>
+              X
+            </Text>
           </TouchableOpacity>
           <View style={styles.Header}>
             <Text style={styles.Title}>Create New Album</Text>
@@ -101,7 +106,6 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                 theme={Enums.TEXTINPUT_TYPES.Primary}
                 label="Title"
                 placeholder="Title"
-                fontSizeParam={16}
                 value={title}
                 onChangeValue={handleTitleChange}
               />
@@ -125,12 +129,16 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                       setImage(returnedImage);
                     });
                   }}
-                  style={styles.CameraSelectionButton}>
-                  <Text style={styles.ImagePickerText}>Take Photo</Text>
+                  style={styles.ImagePickerButton}>
+                  <Text adjustsFontSizeToFit style={styles.ImagePickerText}>
+                    {'Take\nPhoto'}
+                  </Text>
                   <FontAwesome6
+                    adjustsFontSizeToFits
                     style={styles.ImagePickerIcon}
                     name="camera"
                     iconStyle={'solid'}
+                    size={28}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -146,12 +154,16 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                       setImage(returnedImage);
                     });
                   }}
-                  style={styles.LibrarySelectionButton}>
-                  <Text style={styles.ImagePickerText}>Select Image</Text>
+                  style={styles.ImagePickerButton}>
+                  <Text adjustsFontSizeToFit style={styles.ImagePickerText}>
+                    {'Select\nImage'}
+                  </Text>
                   <FontAwesome6
+                    adjustsFontSizeToFits
                     style={styles.ImagePickerIcon}
                     name="file-image"
                     iconStyle={'solid'}
+                    size={28}
                   />
                 </TouchableOpacity>
               </View>
@@ -166,7 +178,9 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                     reFetchAlbums();
                   }}
                   style={styles.CreateButton}>
-                  <Text style={styles.ButtonText}>Create New Album</Text>
+                  <Text adjustsFontSizeToFit style={styles.ButtonText}>
+                    Create New Album
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>

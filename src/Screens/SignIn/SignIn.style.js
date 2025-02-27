@@ -28,11 +28,15 @@ export const styles = StyleSheet.create({
     marginTop: '10%',
   },
   ForgotPasswordText: {
+    flex: 1,
     fontWeight: 600,
+    textAlign: 'right',
+    textAlignVertical: 'center',
   },
   ForgotPasswordButton: {
     flex: 0.5,
-    alignSelf: 'flex-end',
+    height: '100%',
+    width: '100%',
   },
   FailedMessageContainer: {
     flex: 1,

@@ -1,13 +1,20 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StatusBar, StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
+  OutsideContainer: {
+    flex: 1,
+    display: 'flex',
+    position: 'absolute',
+    height: Dimensions.get('screen').height,
+    width: Dimensions.get('screen').width,
+  },
   ProfileTabContainer: {
     flex: 1,
     position: 'absolute',
     backgroundColor: 'white',
     height: '15%',
     width: '40%',
-    bottom: '10%',
+    bottom: Dimensions.get('window').height * 0.14 + StatusBar.currentHeight,
     marginHorizontal: '4%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -19,10 +26,10 @@ export const styles = StyleSheet.create({
   },
   ProfileTabRowContainer: {
     flex: 1,
-    padding: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginHorizontal: '5%',
   },
   Seperator: {
     backgroundColor: 'darkslategrey',

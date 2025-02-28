@@ -35,6 +35,7 @@ const baseStyle = StyleSheet.create({
     textAlign: 'left',
     paddingBottom: 0,
     paddingTop: 0,
+    color: 'black',
   },
   LeftIcon: {
     flex: 1,

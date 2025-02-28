@@ -47,6 +47,7 @@ const TextInputComp = ({
         style={[currentStyle.InputComp, {flex: flexValue}]}
         secureTextEntry={isPassword && !showPassword}
         multiline={multiline}
+        placeholderTextColor={'grey'}
       />
       {hasRightLogo && (
         <TouchableOpacity onPress={rightLogoOnPress}>

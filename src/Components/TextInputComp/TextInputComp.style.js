@@ -19,9 +19,9 @@ const baseStyle = StyleSheet.create({
     backgroundColor: 'white',
     zIndex: 1,
     shadowColor: 'white',
-    borderLeftWidth: 1.5,
-    borderRightWidth: 1.5,
-    borderTopWidth: 1.5,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderTopWidth: 1,
     fontWeight: '500',
   },
   InputComp: {

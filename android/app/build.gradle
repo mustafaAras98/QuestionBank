@@ -115,6 +115,10 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs += ["-Xskip-metadata-version-check"]
+    }
 }
 
 dependencies {
@@ -127,7 +131,7 @@ dependencies {
         implementation jscFlavor
     }
    
-  implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
+  implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
   implementation("com.google.firebase:firebase-analytics")
   implementation("com.google.firebase:firebase-auth")
   implementation("com.google.firebase:firebase-firestore")

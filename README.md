@@ -1,4 +1,4 @@
-# Photo Album App (React Native)
+# Questionbank Photo Album App (React Native)
 
 This project is a photo album application developed using React Native with Firebase integration. Users can create albums, upload photos, add them to favorites, share them, and view shared albums by other users.
 

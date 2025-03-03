@@ -35,6 +35,7 @@ import {styles} from './Gallery.style';
 const Gallery = ({route}) => {
   const user = useSelector(state => state.user);
   const navigation = useNavigation();
+
   let {albumId} = route.params;
   let {sharedType} = route.params;
   let {sharedUid} = route.params;
@@ -147,7 +148,7 @@ const Gallery = ({route}) => {
     const imageIdEncrpyted = await Encrypt(item.Uid);
     const encryptedHex = urlSafeEncode.encodeUrlSafeBase64(imageIdEncrpyted);
 
-    const deepLink = `questionbank://Gallery/${encryptedHex}/${Enums.OpenImageList.Image}`;
+    const deepLink = `https://questionbankwebhost.web.app/${encryptedHex}/${Enums.OpenImageList.Image}`;
 
     try {
       await Share.share({

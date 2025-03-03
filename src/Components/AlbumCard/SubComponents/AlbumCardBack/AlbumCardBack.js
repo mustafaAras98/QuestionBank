@@ -77,7 +77,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
       const albumIdEncrpyted = await Encrypt(albumItem.Uid);
       const encryptedHex = urlSafeEncode.encodeUrlSafeBase64(albumIdEncrpyted);
 
-      const deepLink = `https://questionbankwebhost.web.app/${encryptedHex}/${Enums.OpenImageList.Album}`;
+      const deepLink = `https://questionbankwebhost.web.app/${Enums.OpenImageList.Album}/${encryptedHex}`;
 
       await Share.share({
         title: 'QuestionBank',

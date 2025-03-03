@@ -86,6 +86,11 @@ android {
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
+        externalNativeBuild {
+            cmake {
+                arguments "-DCMAKE_MAKE_PROGRAM=C:/Users/Mustafa/AppData/Local/Android/Sdk/cmake/3.22.1/bin/ninja.exe", "-DCMAKE_OBJECT_PATH_MAX=1024"
+            }
+        }
     }
     signingConfigs {
         release {
@@ -110,14 +115,10 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs += ["-Xskip-metadata-version-check"]
     }
 }
 

@@ -57,7 +57,10 @@ const AppNavigator = () => {
   const processDeepLink = useCallback(
     url => {
       try {
-        const withoutScheme = url.replace('questionbank://app', '');
+        const withoutScheme = url.replace(
+          'https://questionbankwebhost.web.app',
+          '',
+        );
         const pathSegments = withoutScheme.split('/').filter(Boolean);
 
         if (pathSegments.length > 0) {

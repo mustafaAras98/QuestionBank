@@ -148,7 +148,7 @@ const Gallery = ({route}) => {
     const imageIdEncrpyted = await Encrypt(item.Uid);
     const encryptedHex = urlSafeEncode.encodeUrlSafeBase64(imageIdEncrpyted);
 
-    const deepLink = `https://questionbankwebhost.web.app/${encryptedHex}/${Enums.OpenImageList.Image}`;
+    const deepLink = `https://questionbankwebhost.web.app/${Enums.OpenImageList.Image}/${encryptedHex}`;
 
     try {
       await Share.share({

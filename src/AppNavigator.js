@@ -54,16 +54,21 @@ const AppNavigator = () => {
 
     return () => subscription.remove();
   }, [processDeepLink]);
+  function extractAlbumData(url) {
+    const regex =
+      /(?:questionbank:\/\/app\/|https?:\/\/questionbankwebhost\.web\.app\/)(Album|Image)\/([^/]+)/;
+    const match = url.match(regex);
+    return match ? {type: match[1], id: match[2]} : null;
+  }
   const processDeepLink = useCallback(
     url => {
       try {
-        const withoutScheme = url.replace('questionbank://app', '');
-        const pathSegments = withoutScheme.split('/').filter(Boolean);
-
-        if (pathSegments.length > 0) {
-          const type = pathSegments[0];
-          const id = pathSegments[1];
-          navigation.navigate('Gallery', {sharedType: type, sharedUid: id});
+        const albumData = extractAlbumData(url);
+        if (albumData) {
+          navigation.navigate('Gallery', {
+            sharedType: albumData.type,
+            sharedUid: albumData.id,
+          });
         }
       } catch (error) {
         console.error('Deep link işlenirken hata oluştu:', error);

@@ -105,7 +105,7 @@ const SignUp = () => {
         )}
         <View style={styles.Seperator}>
           <View style={styles.SeperatorLine} />
-          <Text adjustsFontSizeToFitstyle={styles.SeperatorText}>OR</Text>
+          <Text adjustsFontSizeToFit style={styles.SeperatorText}>OR</Text>
           <View style={styles.SeperatorLine} />
         </View>
         <View style={styles.OptionalRegisterButtonContainer}>

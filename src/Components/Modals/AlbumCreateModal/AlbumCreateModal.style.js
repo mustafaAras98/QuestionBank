@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
   },
   CreateButton: {
     justifyContent: 'center',
+    alignItems: 'center',
     height: '100%',
     borderRadius: 10,
     padding: '5%',
@@ -70,7 +71,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     textAlignVertical: 'center',
-    fontSize: 28,
+    fontSize: 24,
+    flexShrink: 1,
   },
   FormContainer: {
     flex: 1,

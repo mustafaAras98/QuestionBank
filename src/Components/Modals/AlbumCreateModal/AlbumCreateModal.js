@@ -178,7 +178,10 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                     reFetchAlbums();
                   }}
                   style={styles.CreateButton}>
-                  <Text adjustsFontSizeToFit style={styles.ButtonText}>
+                  <Text
+                    adjustsFontSizeToFit
+                    numberOfLines={1}
+                    style={styles.ButtonText}>
                     Create New Album
                   </Text>
                 </TouchableOpacity>

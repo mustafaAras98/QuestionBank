@@ -1,4 +1,10 @@
-import React, {forwardRef, useCallback, useEffect, useRef} from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import {
   View,
   Animated,
@@ -7,11 +13,12 @@ import {
 } from 'react-native';
 
 import {Enums} from '../../Constants/Enums';
-import {styles} from './AlbumCard.style';
+import {createStyles} from './AlbumCard.style';
 
 import AlbumCardPlaceholder from './SubComponents/AlbumCardPlaceholder/AlbumCardPlaceholder';
 import AlbumCardFront from './SubComponents/AlbumCardFront/AlbumCardFront';
 import AlbumCardBack from './SubComponents/AlbumCardBack/AlbumCardBack';
+import {useSelector} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 const itemHeight = (Dimensions.get('window').height * 0.7) / 3.2;
@@ -88,6 +95,8 @@ const AlbumCard = forwardRef(
       startAnimation();
     }, [isFlipped, startAnimation]);
 
+    const theme = useSelector(state => state.theme.theme);
+    let styles = useMemo(() => createStyles(theme), [theme]);
     return (
       <Animated.View
         ref={albumCardRef}

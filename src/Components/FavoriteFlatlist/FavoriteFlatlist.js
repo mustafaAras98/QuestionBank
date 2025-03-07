@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -8,14 +8,20 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {styles} from './FavoriteFlatlist.style';
+import {createStyles} from './FavoriteFlatlist.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import DisplayImageModal from '../Modals/DisplayImageModal';
+import {useSelector} from 'react-redux';
+import {Colors} from '../../Constants/Colors';
+import {Enums} from '../../Constants/Enums';
 
 const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
   const favoriteFlatlistRef = useRef(null);
   const [containerSize, setContainerSize] = useState({width: 0, height: 0});
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
 
   const renderFavoriteImages = useCallback(
     ({item}) => {
@@ -48,7 +54,7 @@ const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
         </TouchableOpacity>
       );
     },
-    [containerSize],
+    [containerSize, styles],
   );
 
   return (
@@ -69,7 +75,11 @@ const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
           <ActivityIndicator
             style={styles.FlatlistContainer}
             size="large"
-            color="darkslategrey"
+            color={
+              theme === Enums.Themes.DarkTheme
+                ? Colors.DarkTheme.Text
+                : Colors.LightTheme.Text
+            }
           />
         ) : !favoriteImageList || favoriteImageList.length === 0 ? (
           <View style={styles.NoFavoriteContainer}>

@@ -1,11 +1,14 @@
 import {View, Text, TouchableOpacity, FlatList} from 'react-native';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-import {styles} from './DropdownList.style';
+import {createStyles} from './DropdownList.style';
+import {useSelector} from 'react-redux';
 
 const DropdownList = ({setValue, value, list}) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
   const toggleDropdown = () => {
     setIsOpen(prev => !prev);
   };

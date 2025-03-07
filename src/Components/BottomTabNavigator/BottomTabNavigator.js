@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {View} from 'react-native';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -9,11 +9,13 @@ import SignUp from '../../Screens/SignUp';
 import Home from '../../Screens/Home';
 import Gallery from '../../Screens/Gallery';
 
-import {styles} from './BottomTabNavigator.style';
+import {createStyles} from './BottomTabNavigator.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import ProfileTabs from './SubComponents/ProfileTabs';
 
 const TabIcons = ({route, focused}) => {
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
   const icons = {
     Home: 'house',
     SignIn: 'user',
@@ -36,7 +38,11 @@ const NullComp = () => {
 
 const BottomTabNavigator = () => {
   const Tab = createBottomTabNavigator();
+  const theme = useSelector(state => state.theme.theme);
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const isAuthenticated = useSelector(state => state.user.isAuthenticated);
+
   const [profileVisible, setProfileVisible] = useState(false);
 
   return (

@@ -1,7 +1,8 @@
 import {View, Text, Modal, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, { useMemo } from 'react';
 
-import {styles} from './DisplayImageModal.style';
+import {createStyles} from './DisplayImageModal.style';
+import {useSelector} from 'react-redux';
 
 const DisplayImageModal = ({
   isModalVisible,
@@ -9,6 +10,8 @@ const DisplayImageModal = ({
   imageUrl,
   title,
 }) => {
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
   return (
     <Modal
       animationType="fade"
@@ -25,7 +28,9 @@ const DisplayImageModal = ({
             </Text>
           </TouchableOpacity>
           <View style={styles.Header}>
-            <Text adjustsFontSizeToFit style={styles.Title}>{title}</Text>
+            <Text adjustsFontSizeToFit style={styles.Title}>
+              {title}
+            </Text>
           </View>
           {imageUrl && (
             <View style={styles.ImageContainer}>

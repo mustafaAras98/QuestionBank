@@ -5,7 +5,7 @@ import {
   Alert,
   Share,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
 import {useSelector} from 'react-redux';
 import ImageCropPicker from 'react-native-image-crop-picker';
@@ -14,7 +14,7 @@ import albumService from '../../../../Services/Album.Service';
 import TextInputComp from '../../../TextInputComp';
 import ButtonComp from '../../../ButtonComp';
 
-import {styles} from './AlbumCardBack.style';
+import {createStyles} from './AlbumCardBack.style';
 import {Enums} from '../../../../Constants/Enums';
 import Encrypt from '../../../../Utils/Encrypt';
 import urlSafeEncode from '../../../../Utils/UrlSafeEncode';
@@ -25,6 +25,8 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
   const [editCoverLoading, setEditCoverLoading] = useState(false);
 
   const userUid = useSelector(state => state.user.info.uid);
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
 
   const handleTitleChange = useCallback(value => {
     setTitle(value);
@@ -100,7 +102,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
         <View style={styles.AlbumCardBackItemContainer}>
           <View style={styles.AlbumCardBackItem}>
             <TextInputComp
-              theme={Enums.TEXTINPUT_TYPES.Primary}
+              theme={theme}
               rightLogoName="pen"
               placeholder="New Title"
               value={title}
@@ -116,7 +118,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
           ) : (
             <View style={styles.AlbumCardBackItem}>
               <ButtonComp
-                theme={Enums.BUTTON_TYPES.Secondary}
+                theme={theme}
                 buttonText="Edit Album Cover"
                 onPress={async () => {
                   ImageCropPicker.openPicker({
@@ -165,7 +167,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
           </View>
           <View style={styles.AlbumCardBackButton}>
             <ButtonComp
-              theme={Enums.BUTTON_TYPES.Secondary}
+              theme={theme}
               buttonText="Share"
               onPress={async () => {
                 await onShare();

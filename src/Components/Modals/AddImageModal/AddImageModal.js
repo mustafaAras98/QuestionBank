@@ -7,13 +7,15 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 
-import styles from './AddImageModal.style';
+import {createStyles} from './AddImageModal.style';
 import {Enums} from '../../../Constants/Enums';
 
 import TextInputComp from '../../TextInputComp';
 import albumService from '../../../Services/Album.Service';
+import {useSelector} from 'react-redux';
+import {Colors} from '../../../Constants/Colors';
 
 const AddImageModal = ({
   userId,
@@ -25,6 +27,8 @@ const AddImageModal = ({
 }) => {
   const [imageName, setImageName] = useState('');
   const [loading, setLoading] = useState(false);
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
 
   const handleImageNameChange = useCallback(value => {
     setImageName(value);
@@ -100,23 +104,35 @@ const AddImageModal = ({
         <Image style={styles.ImageComp} source={{uri: image.path}} />
       </View>
     );
-  }, [image]);
+  }, [image, styles]);
 
-  const renderSubmitButton = useCallback(() => {
-    if (loading) {
-      return <ActivityIndicator size="large" color="darkslategrey" />;
-    }
+  const renderSubmitButton = useCallback(
+    themeProp => {
+      if (loading) {
+        return (
+          <ActivityIndicator
+            size="large"
+            color={
+              themeProp === Enums.Themes.DarkTheme
+                ? Colors.DarkTheme.Text
+                : Colors.LightTheme.Text
+            }
+          />
+        );
+      }
 
-    return (
-      <TouchableOpacity
-        onPress={handleAddImageToAlbum}
-        style={styles.AddImageButton}>
-        <Text adjustsFontSizeToFit style={styles.ButtonText}>
-          Add Image to Album
-        </Text>
-      </TouchableOpacity>
-    );
-  }, [loading, handleAddImageToAlbum]);
+      return (
+        <TouchableOpacity
+          onPress={handleAddImageToAlbum}
+          style={styles.AddImageButton}>
+          <Text adjustsFontSizeToFit style={styles.ButtonText}>
+            Add Image to Album
+          </Text>
+        </TouchableOpacity>
+      );
+    },
+    [loading, handleAddImageToAlbum, styles],
+  );
 
   return (
     <Modal
@@ -140,7 +156,7 @@ const AddImageModal = ({
             <View style={styles.NameInputContainer}>
               <TextInputComp
                 maxLength={18}
-                theme={Enums.TEXTINPUT_TYPES.Primary}
+                theme={theme}
                 label="ImageName"
                 placeholder="Name"
                 value={imageName}
@@ -149,7 +165,7 @@ const AddImageModal = ({
             </View>
             {renderImage()}
             <View style={styles.AddImageButtonContainer}>
-              {renderSubmitButton()}
+              {renderSubmitButton(theme)}
             </View>
           </View>
         </View>

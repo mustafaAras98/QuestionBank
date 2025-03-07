@@ -1,11 +1,16 @@
+import React, {useMemo} from 'react';
 import {TouchableOpacity} from 'react-native';
-import React from 'react';
-import {styles} from './DeleteItemButton.style';
-import Reanimated from 'react-native-reanimated';
+
+import {useSelector} from 'react-redux';
 import albumService from '../../Services/Album.Service';
+
+import Reanimated from 'react-native-reanimated';
+import {createStyles} from './DeleteItemButton.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const DeleteItemButton = ({reFetch, userId, albumId, imageId}) => {
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
   return (
     <Reanimated.View style={styles.DeleteItemContainer}>
       <TouchableOpacity

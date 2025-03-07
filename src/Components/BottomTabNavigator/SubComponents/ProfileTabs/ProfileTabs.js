@@ -1,3 +1,4 @@
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -7,13 +8,18 @@ import {
   Alert,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {styles} from './ProfileTabs.style';
+
+import {createStyles} from './ProfileTabs.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+
 import authService from '../../../../Services/Auth.Service';
+import {useSelector} from 'react-redux';
 
 const ProfileTabs = ({setProfileVisible}) => {
   const [fadeAnim] = useState(new Animated.Value(0));
+
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -32,7 +38,6 @@ const ProfileTabs = ({setProfileVisible}) => {
       useNativeDriver: true,
     }).start(() => setProfileVisible());
   };
-
   return (
     <TouchableWithoutFeedback onPress={handleClose}>
       <View style={styles.OutsideContainer}>

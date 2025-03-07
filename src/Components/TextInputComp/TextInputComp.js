@@ -4,6 +4,7 @@ import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 import styles from './TextInputComp.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {Enums} from '../../Constants/Enums';
+import {Colors} from '../../Constants/Colors';
 
 const TextInputComp = ({
   label,
@@ -20,7 +21,7 @@ const TextInputComp = ({
   multiline = false,
 }) => {
   const [showPassword, setShowPassword] = useState(true);
-  const currentStyle = styles[theme] || styles[Enums.TEXTINPUT_TYPES.Primary];
+  const currentStyle = styles[theme] || styles[Enums.Themes.LightTheme];
   const hasRightLogo = rightLogoName !== 'None' && !isPassword;
   const flexValue = hasRightLogo || isPassword ? 4 : 5;
 
@@ -47,7 +48,7 @@ const TextInputComp = ({
         style={[currentStyle.InputComp, {flex: flexValue}]}
         secureTextEntry={isPassword && !showPassword}
         multiline={multiline}
-        placeholderTextColor="grey"
+        placeholderTextColor={Colors.Common.Disabled}
       />
       {hasRightLogo && (
         <TouchableOpacity onPress={rightLogoOnPress}>

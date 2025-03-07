@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {
   Modal,
   Text,
@@ -14,14 +14,17 @@ import ImagePicker from 'react-native-image-crop-picker';
 import albumService from '../../../Services/Album.Service';
 
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-import styles from './AlbumCreateModal.style';
+import {createStyles} from './AlbumCreateModal.style';
+
 import {Enums} from '../../../Constants/Enums';
+import {Colors} from '../../../Constants/Colors';
 
 import TextInputComp from '../../TextInputComp';
 
 const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
   const [title, setTitle] = useState('');
   const titleRef = useRef(title);
+
   const handleTitleChange = useCallback(value => {
     titleRef.current = value;
     setTitle(value);
@@ -32,6 +35,8 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
   const [loading, setLoading] = useState(false);
 
   const userUid = useSelector(state => state.user.info.uid);
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
 
   const handleCreateNewAlbum = async () => {
     if (title === '') {
@@ -103,7 +108,7 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
             <View style={styles.TitleInputContainer}>
               <TextInputComp
                 maxLength={18}
-                theme={Enums.TEXTINPUT_TYPES.Primary}
+                theme={theme}
                 label="Title"
                 placeholder="Title"
                 value={title}
@@ -170,7 +175,14 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
             )}
             <View style={styles.CreateButtonContainer}>
               {loading ? (
-                <ActivityIndicator size="large" color="darkslategrey" />
+                <ActivityIndicator
+                  size="large"
+                  color={
+                    theme === Enums.Themes.DarkTheme
+                      ? Colors.DarkTheme.Text
+                      : Colors.LightTheme.Text
+                  }
+                />
               ) : (
                 <TouchableOpacity
                   onPress={async () => {

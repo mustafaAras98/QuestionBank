@@ -1,6 +1,5 @@
 export const Enums = {
-  BUTTON_TYPES: {Primary: 'primary', Secondary: 'secondary', Delete: 'delete'},
-  TEXTINPUT_TYPES: {Primary: 'primary', Secondary: 'secondary'},
+  BUTTON_TYPES: {Delete: 'Delete'},
   STATUS: {
     Success: 'Success',
     Failure: 'Failure',
@@ -8,6 +7,7 @@ export const Enums = {
   Lists: {
     OpenImageList: ['Album', 'Image'],
   },
+  Themes: {DarkTheme: 'DarkTheme', LightTheme: 'LightTheme'},
   OpenImageList: {Album: 'Album', Image: 'Image'},
   MESSAGE: {
     LoginSuccess: 'Login successful',

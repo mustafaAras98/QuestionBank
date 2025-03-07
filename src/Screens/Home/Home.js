@@ -4,18 +4,22 @@ import {
   TouchableWithoutFeedback,
   RefreshControl,
 } from 'react-native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import BackgroundContainer from '../../Components/BackgroundContainerComponent';
-import {styles} from './Home.style';
+import {createStyles} from './Home.style';
 import {useSelector} from 'react-redux';
 import albumService from '../../Services/Album.Service';
 import AlbumCard from '../../Components/AlbumCard';
 import {Enums} from '../../Constants/Enums';
 import {useFocusEffect} from '@react-navigation/native';
+import Header from '../../Components/Header/Header';
 
 const Home = () => {
   const user = useSelector(state => state.user);
   const userId = user.info?.uid;
+
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
 
   const flatlistRef = useRef(null);
   const cardRef = useRef(null);
@@ -163,6 +167,9 @@ const Home = () => {
         onLongPress={handlePressOutside}
         onPress={handlePressOutside}>
         <View style={styles.Container}>
+          <View style={styles.HeaderContainer}>
+            <Header />
+          </View>
           <View style={styles.GlassBackground}>
             <View style={styles.FlatListContainer}>
               <FlatList

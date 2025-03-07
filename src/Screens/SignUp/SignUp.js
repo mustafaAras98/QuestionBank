@@ -1,15 +1,16 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {View, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import authService from '../../Services/Auth.Service';
 
-import {styles} from './SignUp.style';
+import {createStyles} from './SignUp.style';
 import {Enums} from '../../Constants/Enums';
 
 import BackgroundContainer from '../../Components/BackgroundContainerComponent';
 import TextInputComp from '../../Components/TextInputComp';
 import ButtonComp from '../../Components/ButtonComp';
+import {useSelector} from 'react-redux';
 
 const SignUp = () => {
   const [user, setUser] = useState({Email: '', Username: '', Password: ''});
@@ -17,6 +18,8 @@ const SignUp = () => {
 
   const userRef = useRef(user);
   const navigation = useNavigation();
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
 
   const onSubmitPress = useCallback(() => {
     const currentUserRef = userRef.current;
@@ -69,7 +72,7 @@ const SignUp = () => {
             leftLogoName="envelope"
             onChangeValue={handleEmailChange}
             value={user.Email}
-            theme={Enums.TEXTINPUT_TYPES.Primary}
+            theme={theme}
           />
           <TextInputComp
             label="Username"
@@ -78,7 +81,7 @@ const SignUp = () => {
             onChangeValue={handleUsernameChange}
             value={user.Username}
             maxLength={18}
-            theme={Enums.TEXTINPUT_TYPES.Primary}
+            theme={theme}
           />
           <TextInputComp
             label="Password"
@@ -87,11 +90,11 @@ const SignUp = () => {
             onChangeValue={handlePasswordChange}
             value={user.Password}
             maxLength={18}
-            theme={Enums.TEXTINPUT_TYPES.Primary}
+            theme={theme}
             isPassword={true}
           />
           <ButtonComp
-            theme={Enums.BUTTON_TYPES.Primary}
+            theme={theme}
             buttonText="REGISTER"
             onPress={onSubmitPress}
           />
@@ -105,13 +108,15 @@ const SignUp = () => {
         )}
         <View style={styles.Seperator}>
           <View style={styles.SeperatorLine} />
-          <Text adjustsFontSizeToFit style={styles.SeperatorText}>OR</Text>
+          <Text adjustsFontSizeToFit style={styles.SeperatorText}>
+            OR
+          </Text>
           <View style={styles.SeperatorLine} />
         </View>
         <View style={styles.OptionalRegisterButtonContainer}>
           <ButtonComp
             onPress={handleGoogleSignIn}
-            theme={Enums.BUTTON_TYPES.Primary}
+            theme={theme}
             buttonText="Sign in with Google"
           />
         </View>

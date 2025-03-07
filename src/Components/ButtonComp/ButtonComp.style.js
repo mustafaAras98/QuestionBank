@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import {Colors} from '../../Constants/Colors';
 
 const baseStyle = StyleSheet.create({
   ButtonContainer: {
@@ -34,40 +35,58 @@ const baseStyle = StyleSheet.create({
 });
 
 export default {
-  primary: StyleSheet.create({
+  LightTheme: StyleSheet.create({
     ...baseStyle,
     ButtonContainer: {
       ...baseStyle.ButtonContainer,
-      backgroundColor: 'white',
-      shadowColor: '#000',
+      backgroundColor: Colors.LightTheme.BackgroundColor,
+      shadowColor: Colors.Common.Black,
     },
     ButtonText: {
       ...baseStyle.ButtonText,
       flex: 5,
-      color: 'black',
+      color: Colors.LightTheme.Text,
     },
     RightIcon: {
       ...baseStyle.RightIcon,
       flex: 2,
-      color: 'black',
+      color: Colors.LightTheme.Text,
     },
   }),
-  delete: StyleSheet.create({
+  DarkTheme: StyleSheet.create({
     ...baseStyle,
     ButtonContainer: {
       ...baseStyle.ButtonContainer,
-      backgroundColor: 'red',
-      shadowColor: 'red',
+      backgroundColor: Colors.DarkTheme.BackgroundColor,
+      shadowColor: Colors.Common.White,
     },
     ButtonText: {
       ...baseStyle.ButtonText,
-      color: 'white',
+      flex: 5,
+      color: Colors.DarkTheme.Text,
+    },
+    RightIcon: {
+      ...baseStyle.RightIcon,
+      flex: 2,
+      color: Colors.DarkTheme.Text,
+    },
+  }),
+  Delete: StyleSheet.create({
+    ...baseStyle,
+    ButtonContainer: {
+      ...baseStyle.ButtonContainer,
+      backgroundColor: Colors.Message.Error,
+      shadowColor: Colors.Message.Error,
+    },
+    ButtonText: {
+      ...baseStyle.ButtonText,
+      color: Colors.Common.White,
       flex: 5,
     },
     RightIcon: {
       ...baseStyle.RightIcon,
       flex: 2,
-      color: 'white',
+      color: Colors.Common.White,
     },
   }),
 };

@@ -9,7 +9,7 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import React, {useState, useCallback, useRef, useEffect} from 'react';
+import React, {useState, useCallback, useRef, useEffect, useMemo} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useSelector} from 'react-redux';
@@ -28,12 +28,16 @@ import albumService from '../../Services/Album.Service';
 import urlSafeEncode from '../../Utils/UrlSafeEncode';
 import Encrypt from '../../Utils/Encrypt';
 
+import {createStyles} from './Gallery.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {Enums} from '../../Constants/Enums';
-import {styles} from './Gallery.style';
+import {Colors} from '../../Constants/Colors';
 
 const Gallery = ({route}) => {
   const user = useSelector(state => state.user);
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
+
   const navigation = useNavigation();
 
   let {albumId} = route.params;
@@ -281,7 +285,7 @@ const Gallery = ({route}) => {
                   onChangeValue={setSharedId}
                   value={sharedId}
                   placeholder={`${dropdownValue} ID`}
-                  theme={Enums.TEXTINPUT_TYPES.Primary}
+                  theme={theme}
                   multiline={true}
                 />
               </View>
@@ -398,7 +402,14 @@ const Gallery = ({route}) => {
             )}
             <View style={styles.GlassContainer}>
               {imageLoading ? (
-                <ActivityIndicator size="large" color="darkslategrey" />
+                <ActivityIndicator
+                  size="large"
+                  color={
+                    theme === Enums.Themes.DarkTheme
+                      ? Colors.DarkTheme.Text
+                      : Colors.LightTheme.Text
+                  }
+                />
               ) : (typeof imagesData === 'string' &&
                   imagesData === Enums.MESSAGE.Errors.NoImageError) ||
                 !imagesData ||

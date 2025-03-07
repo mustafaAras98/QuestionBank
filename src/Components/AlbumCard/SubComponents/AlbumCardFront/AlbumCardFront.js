@@ -1,12 +1,15 @@
 import {View, Text, TouchableOpacity, Image} from 'react-native';
-import React from 'react';
+import React, {useMemo} from 'react';
 
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
-import {styles} from './AlbumCardFront.style';
+import {createStyles} from './AlbumCardFront.style';
 
 const AlbumCardFront = ({albumTitle, albumImageUri, albumUid, onLongPress}) => {
   const navigation = useNavigation();
+  const theme = useSelector(state => state.theme.theme);
+  let styles = useMemo(() => createStyles(theme), [theme]);
   return (
     <TouchableOpacity
       onLongPress={onLongPress}

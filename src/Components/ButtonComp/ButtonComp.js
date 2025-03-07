@@ -12,7 +12,7 @@ const ButtonComp = ({
   rightLogoName = null,
   iconStyle = 'solid',
 }) => {
-  const currentStyle = styles[theme] || styles[Enums.BUTTON_TYPES.Primary];
+  const currentStyle = styles[theme] || styles[Enums.Themes.LightTheme];
   return (
     <TouchableOpacity style={currentStyle.ButtonContainer} onPress={onPress}>
       <Text

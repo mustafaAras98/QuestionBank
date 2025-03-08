@@ -14,6 +14,7 @@ import Gallery from './Screens/Gallery';
 import BottomTabNavigator from './Components/BottomTabNavigator';
 import {useNavigation} from '@react-navigation/native';
 import {Linking} from 'react-native';
+import {initializeTheme} from './Redux/Slices/themeSlice';
 
 const AppNavigator = () => {
   const dispatch = useDispatch();
@@ -76,6 +77,10 @@ const AppNavigator = () => {
     },
     [navigation],
   );
+
+  useEffect(() => {
+    dispatch(initializeTheme());
+  }, [dispatch]);
 
   return (
     <Stack.Navigator

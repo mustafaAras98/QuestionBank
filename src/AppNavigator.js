@@ -11,6 +11,8 @@ import SignIn from './Screens/SignIn';
 import SignUp from './Screens/SignUp';
 import Home from './Screens/Home';
 import Gallery from './Screens/Gallery';
+import ImageScreen from './Screens/ImageScreen';
+
 import BottomTabNavigator from './Components/BottomTabNavigator';
 import {useNavigation} from '@react-navigation/native';
 import {Linking} from 'react-native';
@@ -96,6 +98,7 @@ const AppNavigator = () => {
             component={Gallery}
             initialParams={{albumId: -1}}
           />
+          <Stack.Screen name="ImageScreen" component={ImageScreen} />
         </>
       ) : (
         <>
@@ -106,6 +109,7 @@ const AppNavigator = () => {
             initialParams={{albumId: -1}}
           />
           <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="ImageScreen" component={ImageScreen} />
         </>
       )}
     </Stack.Navigator>

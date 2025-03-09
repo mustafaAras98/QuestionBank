@@ -46,11 +46,6 @@ const AddImageModal = ({
 
   const validateImageName = useCallback(() => {
     if (!imageName.trim()) {
-      Alert.alert(
-        'Image Name Required',
-        'Please enter a name for your image.',
-        [{text: 'OK'}],
-      );
       return false;
     }
     return true;
@@ -58,7 +53,7 @@ const AddImageModal = ({
 
   const handleAddImageToAlbum = useCallback(async () => {
     if (!validateImageName()) {
-      return;
+      setImageName('');
     }
 
     setLoading(true);

@@ -172,9 +172,7 @@ const addNewImage = async (albumUid, userUid, name, imagePath) => {
   if (!albumUid || albumUid === -1) {
     return Enums.MESSAGE.Errors.AlbumIdMissing;
   }
-  if (!name) {
-    return Enums.MESSAGE.Errors.ImageNameMissing;
-  }
+
   try {
     const albumDoc = albumDocByUserIdAndAlbumId(userUid, albumUid);
 

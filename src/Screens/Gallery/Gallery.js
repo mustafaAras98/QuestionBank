@@ -215,9 +215,11 @@ const Gallery = ({route}) => {
             </View>
           )}
           <Image style={styles.ImageComp} source={{uri: item.ImageURL}} />
-          <View style={styles.FlatlistItemNameContainer}>
-            <Text style={styles.FlatlistItemNameText}>{item.Name}</Text>
-          </View>
+          {item?.Name ? (
+            <View style={styles.FlatlistItemNameContainer}>
+              <Text style={styles.FlatlistItemNameText}>{item.Name}</Text>
+            </View>
+          ) : null}
         </TouchableOpacity>
       </ReanimatedSwipeable>
     );
@@ -231,9 +233,11 @@ const Gallery = ({route}) => {
         }}
         style={styles.FlatlistItemContainer}>
         <Image style={styles.ImageComp} source={{uri: item.ImageURL}} />
-        <View style={styles.FlatlistItemNameContainer}>
-          <Text style={styles.FlatlistItemNameText}>{item.Name}</Text>
-        </View>
+        {item?.Name ? (
+          <View style={styles.FlatlistItemNameContainer}>
+            <Text style={styles.FlatlistItemNameText}>{item.Name}</Text>
+          </View>
+        ) : null}
       </TouchableOpacity>
     );
   };

@@ -9,6 +9,7 @@ import {
   Platform,
   Linking,
   ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 import React, {useMemo, useRef, useState} from 'react';
 
@@ -47,11 +48,11 @@ const DisplayImageModal = ({
     }
     setSelectedImage(null);
   };
+
   const requestStoragePermission = async () => {
     try {
       const androidVersion = Number(Platform.Version);
-      // Android 13 (API 33) and above doesn't require storage permission for saving files
-      if (androidVersion >= 33) {
+      if (androidVersion >= 29) {
         return true;
       }
       const hasPermission = await PermissionsAndroid.check(
@@ -138,6 +139,12 @@ const DisplayImageModal = ({
       taskRef.current
         .then(async res => {
           await copyMediaToStorage(res.path(), fileName);
+          ToastAndroid.show(
+            'Image has been saved',
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            1000
+          );
           setIsDownloadCompleted(true);
           setIsDownloading(false);
         })

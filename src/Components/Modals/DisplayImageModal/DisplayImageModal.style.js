@@ -35,6 +35,7 @@ export const createStyles = theme => {
       marginTop: 10,
       justifyContent: 'center',
       alignItems: 'center',
+      position: 'relative',
     },
     Title: {
       textAlign: 'center',
@@ -69,5 +70,25 @@ export const createStyles = theme => {
       zIndex: 1,
     },
     CloseText: {color: Colors.Common.White, fontWeight: '800'},
+    SaveIconContainer: {
+      backgroundColor: isDarkTheme
+        ? Colors.DarkTheme.Text
+        : Colors.LightTheme.Text,
+      position: 'absolute',
+      left: '4%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%',
+      width: Dimensions.get('screen').width * 0.7 * 0.15,
+      borderRadius: '25%',
+    },
+    SaveIcon: {
+      fontSize: 24,
+      color: isDarkTheme ? Colors.LightTheme.Text : Colors.DarkTheme.Text,
+    },
+    CheckIcon: {
+      fontSize: 24,
+      color: Colors.Message.Success,
+    },
   });
 };

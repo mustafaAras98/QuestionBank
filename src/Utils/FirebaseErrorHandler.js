@@ -1,25 +1,23 @@
-import {Enums} from '../Constants/Enums';
-
-const handleFirebaseAuthError = error => {
-  console.error('Firebase Auth Error:', error); // Log için
+const handleFirebaseAuthError = (error, t) => {
+  console.error('Firebase Auth Error:', error);
 
   switch (error.code) {
     case 'auth/email-already-in-use':
-      return Enums.MESSAGE.Errors.EmailAlreadyExists;
+      return t('authenticationErrors.EmailAlreadyExists');
     case 'auth/invalid-email':
-      return Enums.MESSAGE.Errors.InvalidEmail;
+      return t('authenticationErrors.InvalidEmail');
     case 'auth/operation-not-allowed':
-      return Enums.MESSAGE.Errors.OperationNotAllowed;
+      return t('authenticationErrors.OperationNotAllowed');
     case 'auth/weak-password':
-      return Enums.MESSAGE.Errors.WeakPassword;
+      return t('authenticationErrors.WeakPassword');
     case 'auth/network-request-failed':
-      return Enums.MESSAGE.Errors.NetworkRequestFailed;
+      return t('authenticationErrors.NetworkRequestFailed');
     case 'auth/invalid-credential':
-      return Enums.MESSAGE.Errors.InvalidCredential;
+      return t('authenticationErrors.InvalidCredential');
     case 'auth/too-many-requests':
-      return Enums.MESSAGE.Errors.TooManyRequest;
+      return t('authenticationErrors.TooManyRequest');
     default:
-      return Enums.MESSAGE.Errors.UnknownError;
+      return t('commonErrors.UnknownError');
   }
 };
 

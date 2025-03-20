@@ -3,8 +3,10 @@ import React, {useMemo, useState} from 'react';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {createStyles} from './DropdownList.style';
 import {useSelector} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 
 const DropdownList = ({setValue, value, list}) => {
+  const {t} = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const theme = useSelector(state => state.theme.theme);
@@ -30,7 +32,7 @@ const DropdownList = ({setValue, value, list}) => {
     <View style={styles.Container}>
       <TouchableOpacity onPress={toggleDropdown} style={styles.SelectBox}>
         <Text adjustsFontSizeToFit style={styles.SelectText}>
-          {value ? value : 'Lütfen Seçiniz'}
+          {value || t('dropdownlist.SelectOne')}
         </Text>
         <FontAwesome6
           adjustsFontSizeToFit

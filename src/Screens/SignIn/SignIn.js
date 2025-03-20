@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {View, Text, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, ToastAndroid} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -11,8 +11,11 @@ import BackgroundContainer from '../../Components/BackgroundContainerComponent';
 import TextInputComp from '../../Components/TextInputComp';
 import ButtonComp from '../../Components/ButtonComp';
 import authService from '../../Services/Auth.Service';
+import {useTranslation} from 'react-i18next';
 
 const SignIn = () => {
+  const {t} = useTranslation();
+
   const [user, setUser] = useState({Email: '', Password: ''});
   const [message, setMessage] = useState('');
 
@@ -25,8 +28,8 @@ const SignIn = () => {
   const onSubmitPress = useCallback(() => {
     const currentUserRef = userRef.current;
 
-    authService.signInWithEmail(currentUserRef).then(resultMsg => {
-      if (resultMsg === Enums.MESSAGE.LoginSuccess) {
+    authService.signInWithEmail(currentUserRef, t).then(resultMsg => {
+      if (resultMsg === Enums.STATUS.Success) {
         setMessage('');
         setUser({...currentUserRef, Password: ''});
         navigation.navigate('BottomTabNavigator', {screen: 'Home'});
@@ -35,26 +38,27 @@ const SignIn = () => {
         setUser({...currentUserRef, Password: ''});
       }
     });
-  }, [navigation]);
+  }, [navigation, t]);
 
   const handleGoogleSignIn = useCallback(() => {
-    authService.signInWithGoogle().then(resultMsg => {
-      if (resultMsg === Enums.MESSAGE.LoginSuccess) {
+    authService.signInWithGoogle(t).then(resultMsg => {
+      if (resultMsg === Enums.STATUS.Success) {
         setMessage('');
         navigation.navigate('BottomTabNavigator', {screen: 'Home'});
       } else {
         setMessage(resultMsg);
       }
     });
-  }, [navigation]);
+  }, [navigation, t]);
 
   const onForgetPasswordPress = () => {
-    authService.forgetPassword(user.Email).then(resultMsg => {
-      if (resultMsg === Enums.MESSAGE.ForgetPasswordSucces) {
-        Alert.alert(
-          'Forget Password Email Sent',
-          Enums.MESSAGE.ForgottenPasswordMailSent,
-          [{text: 'OK', onPress: () => {}}],
+    authService.forgetPassword(user.Email, t).then(resultMsg => {
+      if (resultMsg === Enums.STATUS.Success) {
+        ToastAndroid.show(
+          t('userNotificationMessages.ForgottenPasswordMailSent'),
+          ToastAndroid.SHORT,
+          ToastAndroid.TOP,
+          1000,
         );
         setMessage('');
       } else {
@@ -79,16 +83,16 @@ const SignIn = () => {
         <View style={styles.GlassBackground} />
         <View style={styles.LoginFormContainer}>
           <TextInputComp
-            label="E-Mail"
-            placeholder="Enter Your  E-Mail..."
+            label={t('commonUse.Email')}
+            placeholder={t('placeholders.EmailPlaceholder')}
             leftLogoName="envelope"
             onChangeValue={handleEmailChange}
             value={user.Email}
             theme={theme}
           />
           <TextInputComp
-            label="Password"
-            placeholder="Enter Your Password..."
+            label={t('commonUse.Password')}
+            placeholder={t('placeholders.PasswordPlaceholder')}
             leftLogoName="lock"
             onChangeValue={handlePasswordChange}
             value={user.Password}
@@ -103,12 +107,12 @@ const SignIn = () => {
               adjustsFontSizeToFit
               minimumFontScale={0.8}
               style={styles.ForgotPasswordText}>
-              Forgot Password?
+              {t('authentication.passwordForget')}
             </Text>
           </TouchableOpacity>
           <ButtonComp
             theme={theme}
-            buttonText="LOGIN"
+            buttonText={t('authentication.Login')}
             onPress={onSubmitPress}
           />
         </View>
@@ -121,8 +125,11 @@ const SignIn = () => {
         )}
         <View style={styles.Seperator}>
           <View style={styles.SeperatorLine} />
-          <Text adjustsFontSizeToFit style={styles.SeperatorText}>
-            OR
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={styles.SeperatorText}>
+            {t('commonUse.Or')}
           </Text>
           <View style={styles.SeperatorLine} />
         </View>
@@ -130,18 +137,18 @@ const SignIn = () => {
           <ButtonComp
             onPress={handleGoogleSignIn}
             theme={theme}
-            buttonText="Sign in with Google"
+            buttonText={t('authentication.LoginWithGoogle')}
           />
         </View>
         <View style={styles.NavigateRegisterContainer}>
           <Text adjustsFontSizeToFit style={styles.NavigateRegisterText}>
-            Don't have an account?{' '}
+            {t('authentication.DontHaveAccount')}
           </Text>
           <Text
             adjustsFontSizeToFit
             onPress={() => navigation.navigate('SignUp')}
             style={styles.NavigateRegisterButton}>
-            Sign Up
+            {t('authentication.SignUp')}
           </Text>
         </View>
       </View>

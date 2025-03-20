@@ -14,8 +14,10 @@ import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 import authService from '../../../../Services/Auth.Service';
 import {useSelector} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 
 const ProfileTabs = ({setProfileVisible}) => {
+  const {t} = useTranslation();
   const [fadeAnim] = useState(new Animated.Value(0));
 
   const theme = useSelector(state => state.theme.theme);
@@ -47,17 +49,20 @@ const ProfileTabs = ({setProfileVisible}) => {
             style={styles.ProfileTabRowContainer}
             onPress={() => {
               Alert.alert(
-                'Remove User',
-                'All user data and previously created content will be permanently deleted. Are you sure you want to proceed? ',
+                t('commonUse.DeleteUser'),
+                t('userNotificationMessages.UserDeleteConfirmation'),
                 [
-                  {text: 'Cancel', onPress: () => null},
-                  {text: 'Remove', onPress: () => authService.deleteUser()},
+                  {text: t('commonUse.Cancel'), onPress: () => null},
+                  {
+                    text: t('commonUse.Ok'),
+                    onPress: () => authService.deleteUser(t),
+                  },
                 ],
               );
               handleClose();
             }}>
             <Text adjustsFontSizeToFit style={styles.ProfileTabText}>
-              Delete User
+              {t('commonUse.DeleteUser')}
             </Text>
             <FontAwesome6
               adjustsFontSizeToFit
@@ -74,7 +79,7 @@ const ProfileTabs = ({setProfileVisible}) => {
               handleClose();
             }}>
             <Text adjustsFontSizeToFit style={styles.ProfileTabText}>
-              Sign Out
+              {t('commonUse.SignOut')}
             </Text>
             <FontAwesome6
               adjustsFontSizeToFit

@@ -30,15 +30,16 @@ export const createStyles = theme => {
       elevation: 5,
     },
     Header: {
-      width: '100%',
+      flexDirection: 'row',
       height: Dimensions.get('screen').width * 0.7 * 0.15,
       marginTop: 10,
       justifyContent: 'center',
-      alignItems: 'center',
-      position: 'relative',
+      alignContent: 'center',
     },
     Title: {
+      flex: 8,
       textAlign: 'center',
+      textAlignVertical: 'center',
       fontWeight: '800',
       fontSize: 20,
       color: isDarkTheme ? Colors.DarkTheme.Text : Colors.LightTheme.Text,
@@ -71,11 +72,11 @@ export const createStyles = theme => {
     },
     CloseText: {color: Colors.Common.White, fontWeight: '800'},
     SaveIconContainer: {
+      flex: 1.2,
+      left: 0,
       backgroundColor: isDarkTheme
         ? Colors.DarkTheme.Text
         : Colors.LightTheme.Text,
-      position: 'absolute',
-      left: '4%',
       alignItems: 'center',
       justifyContent: 'center',
       height: '100%',

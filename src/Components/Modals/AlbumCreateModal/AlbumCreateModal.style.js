@@ -47,7 +47,6 @@ export const createStyles = theme => {
     },
     CreateButtonContainer: {
       flex: 1,
-
       justifyContent: 'center',
     },
     CreateButton: {
@@ -79,8 +78,7 @@ export const createStyles = theme => {
       fontWeight: 'bold',
       textAlign: 'center',
       textAlignVertical: 'center',
-      fontSize: 24,
-      flexShrink: 1,
+      fontSize: 18,
     },
     FormContainer: {
       flex: 1,
@@ -125,7 +123,7 @@ export const createStyles = theme => {
     },
     ImagePickerText: {
       flex: 1.5,
-      textAlign: 'left',
+      textAlign: 'center',
       textAlignVertical: 'center',
       color: isDarkTheme ? Colors.DarkTheme.Text : Colors.LightTheme.Text,
       fontWeight: '700',

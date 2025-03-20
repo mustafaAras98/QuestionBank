@@ -11,8 +11,11 @@ import BackgroundContainer from '../../Components/BackgroundContainerComponent';
 import TextInputComp from '../../Components/TextInputComp';
 import ButtonComp from '../../Components/ButtonComp';
 import {useSelector} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 
 const SignUp = () => {
+  const {t} = useTranslation();
+
   const [user, setUser] = useState({Email: '', Username: '', Password: ''});
   const [message, setMessage] = useState('');
 
@@ -23,8 +26,8 @@ const SignUp = () => {
 
   const onSubmitPress = useCallback(() => {
     const currentUserRef = userRef.current;
-    authService.createUserWithEmail(currentUserRef).then(resultMsg => {
-      if (resultMsg === Enums.MESSAGE.SignUpSuccess) {
+    authService.createUserWithEmail(currentUserRef, t).then(resultMsg => {
+      if (resultMsg === Enums.STATUS.Success) {
         setMessage('');
         setUser({...currentUserRef, Password: ''});
         navigation.navigate('BottomTabNavigator', {screen: 'Home'});
@@ -33,11 +36,11 @@ const SignUp = () => {
         setUser({...currentUserRef, Password: ''});
       }
     });
-  }, [navigation]);
+  }, [navigation, t]);
 
   const handleGoogleSignIn = useCallback(() => {
     authService.signInWithGoogle().then(resultMsg => {
-      if (resultMsg === Enums.MESSAGE.LoginSuccess) {
+      if (resultMsg === Enums.STATUS.Success) {
         navigation.navigate('BottomTabNavigator', {screen: 'Home'});
         setMessage('');
       } else {
@@ -67,16 +70,16 @@ const SignUp = () => {
         <View style={styles.GlassBackground} />
         <View style={styles.RegisterFormContainer}>
           <TextInputComp
-            label="E-Mail"
-            placeholder="Enter Your  E-Mail..."
+            label={t('commonUse.Email')}
+            placeholder={t('placeholders.EmailPlaceholder')}
             leftLogoName="envelope"
             onChangeValue={handleEmailChange}
             value={user.Email}
             theme={theme}
           />
           <TextInputComp
-            label="Username"
-            placeholder="Enter Your Username..."
+            label={t('commonUse.Username')}
+            placeholder={t('placeholders.UsernamePlaceholder')}
             leftLogoName="user"
             onChangeValue={handleUsernameChange}
             value={user.Username}
@@ -84,8 +87,8 @@ const SignUp = () => {
             theme={theme}
           />
           <TextInputComp
-            label="Password"
-            placeholder="Enter Your Password..."
+            label={t('commonUse.Password')}
+            placeholder={t('placeholders.PasswordPlaceholder')}
             leftLogoName="lock"
             onChangeValue={handlePasswordChange}
             value={user.Password}
@@ -95,7 +98,7 @@ const SignUp = () => {
           />
           <ButtonComp
             theme={theme}
-            buttonText="REGISTER"
+            buttonText={t('authentication.SignUp')}
             onPress={onSubmitPress}
           />
         </View>
@@ -108,8 +111,11 @@ const SignUp = () => {
         )}
         <View style={styles.Seperator}>
           <View style={styles.SeperatorLine} />
-          <Text adjustsFontSizeToFit style={styles.SeperatorText}>
-            OR
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={styles.SeperatorText}>
+            {t('commonUse.Or')}
           </Text>
           <View style={styles.SeperatorLine} />
         </View>
@@ -117,18 +123,18 @@ const SignUp = () => {
           <ButtonComp
             onPress={handleGoogleSignIn}
             theme={theme}
-            buttonText="Sign in with Google"
+            buttonText={t('authentication.LoginWithGoogle')}
           />
         </View>
         <View style={styles.NavigateRegisterContainer}>
           <Text adjustsFontSizeToFit style={styles.NavigateRegisterText}>
-            Already have an account?{' '}
-            <Text
-              adjustsFontSizeToFit
-              onPress={() => navigation.navigate('SignIn')}
-              style={styles.NavigateRegisterButton}>
-              Sign In
-            </Text>
+            {t('authentication.AlreadyHaveAccount')}
+          </Text>
+          <Text
+            adjustsFontSizeToFit
+            onPress={() => navigation.navigate('SignIn')}
+            style={styles.NavigateRegisterButton}>
+            {t('authentication.Login')}
           </Text>
         </View>
       </View>

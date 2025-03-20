@@ -27,15 +27,15 @@ import handleFirebaseAuthError from '../Utils/FirebaseErrorHandler';
 
 const auth = getAuth();
 
-const createUserWithEmail = async userParam => {
+const createUserWithEmail = async (userParam, t) => {
   const user = new User(userParam.Email, userParam.Username);
   const password = userParam.Password.trim();
 
-  let emailValidate = ValidateEmailSchema(user.Email);
-  let usernameValidate = ValidateUsernameSchema(user.Username, 8, 18);
-  let passwordValidate = ValidatePasswordSchema(password, 8, 18);
-
+  let emailValidate = ValidateEmailSchema(user.Email, t);
+  let usernameValidate = ValidateUsernameSchema(user.Username, 8, 18, t);
+  let passwordValidate = ValidatePasswordSchema(password, 8, 18, t);
   let validateMessage = '';
+
   if (emailValidate !== Enums.STATUS.Success) {
     validateMessage += `${emailValidate} \n`;
   }
@@ -46,7 +46,7 @@ const createUserWithEmail = async userParam => {
     validateMessage += `${passwordValidate}`;
   }
   if (validateMessage !== '') {
-    return validateMessage;
+    return validateMessage.trim();
   }
 
   try {
@@ -57,19 +57,20 @@ const createUserWithEmail = async userParam => {
     );
     await saveNewUserToFirestore(userCredential, user);
 
-    return Enums.MESSAGE.SignUpSuccess;
+    return Enums.STATUS.Success;
   } catch (error) {
-    return handleFirebaseAuthError(error);
+    return handleFirebaseAuthError(error, t);
   }
 };
-const signInWithEmail = async userParam => {
+const signInWithEmail = async (userParam, t) => {
   let email = userParam.Email.trim();
   let password = userParam.Password.trim();
 
-  let emailValidate = ValidateEmailSchema(email);
-  let passwordValidate = ValidatePasswordSchema(password, 8, 18);
+  let emailValidate = ValidateEmailSchema(email, t);
+  let passwordValidate = ValidatePasswordSchema(password, 8, 18, t);
 
   let validateMessage = '';
+
   if (emailValidate !== Enums.STATUS.Success) {
     validateMessage += `${emailValidate} \n`;
   }
@@ -77,13 +78,13 @@ const signInWithEmail = async userParam => {
     validateMessage += `${passwordValidate}`;
   }
   if (validateMessage !== '') {
-    return validateMessage;
+    return validateMessage.trim();
   }
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    return Enums.MESSAGE.LoginSuccess;
+    return Enums.STATUS.Success;
   } catch (error) {
-    return handleFirebaseAuthError(error);
+    return handleFirebaseAuthError(error, t);
   }
 };
 const logout = async () => {
@@ -95,7 +96,7 @@ const logout = async () => {
     return error.code;
   }
 };
-const deleteUser = async () => {
+const deleteUser = async t => {
   try {
     const userId = auth.currentUser.uid;
     if (userId) {
@@ -105,7 +106,7 @@ const deleteUser = async () => {
         if (!albumSnapshot) {
           return;
         }
-        await albumService.removeAlbum(albumSnapshot.data().Uid, userId);
+        await albumService.removeAlbum(albumSnapshot.data().Uid, userId, t);
       });
 
       await usersCollection.doc(userId).delete();
@@ -116,9 +117,9 @@ const deleteUser = async () => {
     return error.code;
   }
 };
-const forgetPassword = async email => {
+const forgetPassword = async (email, t) => {
   let emailTrimmed = email.trim();
-  let emailValidate = ValidateEmailSchema(emailTrimmed);
+  let emailValidate = ValidateEmailSchema(emailTrimmed, t);
   if (emailValidate !== Enums.STATUS.Success) {
     return emailValidate;
   }
@@ -126,15 +127,15 @@ const forgetPassword = async email => {
     const q = query(usersCollection, where('user.Email', '==', emailTrimmed));
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) {
-      return Enums.MESSAGE.Errors.EmailDontExists;
+      return t('authenticationErrors.EmailDontExists');
     }
     await sendPasswordResetEmail(auth, emailTrimmed);
-    return Enums.MESSAGE.ForgetPasswordSucces;
+    return Enums.STATUS.Success;
   } catch (error) {
-    return handleFirebaseAuthError(error);
+    return handleFirebaseAuthError(error, t);
   }
 };
-const signInWithGoogle = async () => {
+const signInWithGoogle = async t => {
   GoogleSignin.configure({
     webClientId: WEB_CLIENT_ID,
   });
@@ -143,7 +144,7 @@ const signInWithGoogle = async () => {
     const signInResult = await GoogleSignin.signIn();
 
     if (!signInResult || (!signInResult.data && !signInResult.idToken)) {
-      return Enums.MESSAGE.Errors.SignInCancelled;
+      return t('authenticationErrors.SignInCancelled');
     }
 
     let idToken = signInResult.data.idToken;
@@ -151,7 +152,7 @@ const signInWithGoogle = async () => {
       idToken = signInResult.idToken;
     }
     if (!idToken) {
-      return Enums.MESSAGE.Errors.IDTokenError;
+      return t('authenticationErrors.IDTokenError');
     }
     const googleCredential = firebase.auth.GoogleAuthProvider.credential(
       signInResult.data.idToken,
@@ -160,9 +161,9 @@ const signInWithGoogle = async () => {
       .signInWithCredential(googleCredential)
       .then(() => saveGoogleUserToFirestore(auth.currentUser));
 
-    return Enums.MESSAGE.LoginSuccess;
+    return Enums.STATUS.Success;
   } catch (error) {
-    return handleFirebaseAuthError(error);
+    return handleFirebaseAuthError(error, t);
   }
 };
 const saveGoogleUserToFirestore = async userParam => {
@@ -187,7 +188,7 @@ const saveGoogleUserToFirestore = async userParam => {
       const albumsRef = userRef.collection('Albums');
       await addDoc(albumsRef, {});
     }
-    return Enums.MESSAGE.SignUpSuccess;
+    return Enums.STATUS.Success;
   } catch (error) {
     throw error;
   }
@@ -210,7 +211,7 @@ const saveNewUserToFirestore = async (userCredential, user) => {
     const albumsRef = userRef.collection('Albums');
     await addDoc(albumsRef, {});
 
-    return Enums.MESSAGE.SignUpSuccess;
+    return Enums.STATUS.Success;
   } catch (error) {
     throw error;
   }

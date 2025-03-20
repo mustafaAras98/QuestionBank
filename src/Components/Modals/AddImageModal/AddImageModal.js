@@ -16,6 +16,7 @@ import TextInputComp from '../../TextInputComp';
 import albumService from '../../../Services/Album.Service';
 import {useSelector} from 'react-redux';
 import {Colors} from '../../../Constants/Colors';
+import {useTranslation} from 'react-i18next';
 
 const AddImageModal = ({
   userId,
@@ -25,6 +26,7 @@ const AddImageModal = ({
   setModalVisible,
   reFetch,
 }) => {
+  const {t} = useTranslation();
   const [imageName, setImageName] = useState('');
   const [loading, setLoading] = useState(false);
   const theme = useSelector(state => state.theme.theme);
@@ -63,19 +65,19 @@ const AddImageModal = ({
         userId,
         imageName,
         image.path,
+        t,
       );
 
       if (status !== Enums.STATUS.Success) {
-        throw new Error(`Failed to add image: ${status}`);
+        throw new Error(status);
       }
 
       closeModal();
       reFetch();
     } catch (error) {
-      console.error('Image Add to Album error:', error);
       Alert.alert(
-        'Error',
-        error.message || 'Failed to add image to album. Please try again.',
+        t('commonUse.Error'),
+        error.message || t('image.imageErrors.FailedImageUpload'),
       );
     }
     setLoading(false);
@@ -87,6 +89,7 @@ const AddImageModal = ({
     reFetch,
     userId,
     validateImageName,
+    t,
   ]);
 
   const renderImage = useCallback(() => {
@@ -121,12 +124,12 @@ const AddImageModal = ({
           onPress={handleAddImageToAlbum}
           style={styles.AddImageButton}>
           <Text adjustsFontSizeToFit style={styles.ButtonText}>
-            Add Image to Album
+            {t('modals.AddImageModal.ButtonText')}
           </Text>
         </TouchableOpacity>
       );
     },
-    [loading, handleAddImageToAlbum, styles],
+    [loading, handleAddImageToAlbum, styles, t],
   );
 
   return (
@@ -144,7 +147,7 @@ const AddImageModal = ({
           </TouchableOpacity>
           <View style={styles.Header}>
             <Text adjustsFontSizeToFit style={styles.Title}>
-              Add Image to Album
+              {t('modals.AddImageModal.Title')}
             </Text>
           </View>
           <View style={styles.FormContainer}>
@@ -152,8 +155,8 @@ const AddImageModal = ({
               <TextInputComp
                 maxLength={18}
                 theme={theme}
-                label="ImageName"
-                placeholder="Name"
+                label={t('commonUse.ImageName')}
+                placeholder={t('commonUse.ImageName')}
                 value={imageName}
                 onChangeValue={handleImageNameChange}
               />

@@ -12,28 +12,28 @@ import storage, {deleteObject} from '@react-native-firebase/storage';
 import Decrypt from '../Utils/Decyrpt';
 import urlSafeEncode from '../Utils/UrlSafeEncode';
 
-const fetchAlbumTitlesByUserId = async userId => {
+const fetchAlbumTitlesByUserId = async (userId, t) => {
   if (!userId) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   try {
     const albumCollection = albumDocsByUserId(userId);
     const querySnapshot = await albumCollection.get();
 
     if (querySnapshot.empty) {
-      return Enums.MESSAGE.Errors.AlbumsDontExists;
+      return t('album.albumErrors.AlbumDontExists');
     }
     const albumTitles = querySnapshot.docs.map(doc => doc.data().Title);
     return albumTitles;
   } catch (error) {
     console.error('Error fetching albums:', error);
-    return Enums.MESSAGE.Errors.FetchAlbumsError;
+    return t('album.albumErrors.FetchImagesError');
   }
 };
 
-const fetchAlbumsByUserId = async userId => {
+const fetchAlbumsByUserId = async (userId, t) => {
   if (!userId) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
 
   try {
@@ -41,26 +41,26 @@ const fetchAlbumsByUserId = async userId => {
     const querySnapshot = await albumCollection.get();
 
     if (querySnapshot.empty) {
-      return Enums.MESSAGE.Errors.AlbumsDontExists;
+      return t('album.albumErrors.AlbumDontExists');
     }
 
     const albums = querySnapshot.docs.map(doc => doc.data());
     return albums;
   } catch (error) {
     console.error('Error fetching albums:', error);
-    return Enums.MESSAGE.Errors.FetchAlbumsError;
+    return t('album.albumErrors.FetchImagesError');
   }
 };
 
-const createNewAlbum = async (userUid, title, imagePath) => {
+const createNewAlbum = async (userUid, title, imagePath, t) => {
   if (!userUid) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   if (!title) {
-    return Enums.MESSAGE.Errors.TitleMissing;
+    return t('commonErrors.TitleMissing');
   }
   if (!imagePath) {
-    return Enums.MESSAGE.Errors.ImagePathMissing;
+    return t('commonErrors.ImageMissing');
   }
   try {
     const userRef = usersCollection.doc(userUid);
@@ -82,7 +82,7 @@ const createNewAlbum = async (userUid, title, imagePath) => {
     );
     const imageBlob = await response.blob();
     if (!imageBlob) {
-      return Enums.MESSAGE.Errors.ImageCannotConvertToBlob;
+      return t('image.imageErrors.ImageCannotConvertToBlob');
     }
     const imageRef = storage().ref(
       `Users/${userUid}/Albums/${albumDocRef.id}/${Date.now()}.jpg`,
@@ -95,16 +95,16 @@ const createNewAlbum = async (userUid, title, imagePath) => {
     return Enums.STATUS.Success;
   } catch (error) {
     console.error(error);
-    return Enums.MESSAGE.Errors.CreateNewAlbumGenericError;
+    return t('album.albumErrors.CreateNewAlbumError');
   }
 };
 
-const removeAlbum = async (albumUid, userUid) => {
+const removeAlbum = async (albumUid, userUid, t) => {
   if (!userUid) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   if (!albumUid) {
-    return Enums.MESSAGE.Errors.AlbumIdMissing;
+    return t('commonErrors.AlbumIdMissing');
   }
   try {
     const albumRef = storage().ref(`Users/${userUid}/Albums/${albumUid}`);
@@ -125,7 +125,7 @@ const removeAlbum = async (albumUid, userUid) => {
       })
       .catch(error => {
         console.error(error);
-        return Enums.MESSAGE.Errors.DeleteAlbumStorageError;
+        return t('album.albumErrors.DeleteAlbumStorageError');
       });
     const albumCollection = albumDocByUserIdAndAlbumId(userUid, albumUid);
     const imagesRef = albumCollection.collection('Images');
@@ -135,24 +135,24 @@ const removeAlbum = async (albumUid, userUid) => {
     });
     await albumCollection.delete().catch(error => {
       console.error(error);
-      return Enums.MESSAGE.Errors.DeleteAlbumFirestoreError;
+      return t('album.albumErrors.DeleteAlbumFirestoreError');
     });
     return Enums.STATUS.Success;
   } catch (error) {
     console.error(error);
-    return Enums.MESSAGE.Errors.DeleteAlbumGenericError;
+    return t('album.albumErrors.DeleteAlbumGenericError');
   }
 };
 
-const editAlbumTitle = async (albumUid, userUid, newTitle) => {
+const editAlbumTitle = async (albumUid, userUid, newTitle, t) => {
   if (!userUid) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   if (!albumUid) {
-    return Enums.MESSAGE.Errors.AlbumIdMissing;
+    return t('commonErrors.AlbumIdMissing');
   }
   if (!newTitle.trim()) {
-    return Enums.MESSAGE.Errors.TitleMissing;
+    return t('commonErrors.TitleMissing');
   }
   try {
     const albumCollection = albumDocByUserIdAndAlbumId(userUid, albumUid);
@@ -161,16 +161,16 @@ const editAlbumTitle = async (albumUid, userUid, newTitle) => {
     return Enums.STATUS.Success;
   } catch (error) {
     console.error(error);
-    return Enums.MESSAGE.Errors.UpdateTitleError;
+    return t('album.albumErrors.UpdateTitleError');
   }
 };
 
-const addNewImage = async (albumUid, userUid, name, imagePath) => {
+const addNewImage = async (albumUid, userUid, name, imagePath, t) => {
   if (!userUid) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   if (!albumUid || albumUid === -1) {
-    return Enums.MESSAGE.Errors.AlbumIdMissing;
+    return t('commonErrors.AlbumIdMissing');
   }
 
   try {
@@ -193,7 +193,7 @@ const addNewImage = async (albumUid, userUid, name, imagePath) => {
     );
     const imageBlob = await response.blob();
     if (!imageBlob) {
-      return Enums.MESSAGE.Errors.ImageCannotConvertToBlob;
+      return t('image.imageErrors.ImageCannotConvertToBlob');
     }
     const imageRef = storage().ref(
       `Users/${userUid}/Albums/${albumUid}/Images/${imagesDocRef.id}`,
@@ -207,16 +207,16 @@ const addNewImage = async (albumUid, userUid, name, imagePath) => {
     return Enums.STATUS.Success;
   } catch (error) {
     console.error(error);
-    return Enums.MESSAGE.Errors.CreateNewImageGenericError;
+    return t('image.imageErrors.AddNewImageError');
   }
 };
 
-const fetchImages = async (userId, albumId) => {
+const fetchImages = async (userId, albumId, t) => {
   if (!userId) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   if (!albumId) {
-    return Enums.MESSAGE.Errors.AlbumIdMissing;
+    return t('commonErrors.AlbumIdMissing');
   }
 
   try {
@@ -230,7 +230,7 @@ const fetchImages = async (userId, albumId) => {
       .get();
 
     if (querySnapshot.empty) {
-      return Enums.MESSAGE.Errors.NoImageError;
+      return t('album.albumErrors.NoImageError');
     }
 
     const images = querySnapshot.docs.map(doc => ({
@@ -239,14 +239,14 @@ const fetchImages = async (userId, albumId) => {
 
     return images;
   } catch (error) {
-    console.error('Error fetching images:', error);
-    return Enums.MESSAGE.Errors.FetchImagesError;
+    console.error(error);
+    return t('album.albumErrors.FetchImagesError');
   }
 };
 
-const fetchImage = async imageId => {
+const fetchImage = async (imageId, t) => {
   if (!imageId) {
-    return Enums.MESSAGE.Errors.ImageIdMissing;
+    return t('commonErrors.ImageMissing');
   }
 
   try {
@@ -260,7 +260,7 @@ const fetchImage = async imageId => {
     let image;
     await imageQuery.get().then(querySnapshot => {
       if (!querySnapshot) {
-        return Enums.MESSAGE.Errors.FetchImageNoImageError;
+        return t('image.imageErrors.FetchImageNoImageError');
       }
       querySnapshot.forEach(doc => {
         if (doc.data()) {
@@ -270,20 +270,20 @@ const fetchImage = async imageId => {
     });
 
     if (!image) {
-      return Enums.MESSAGE.Errors.FetchImageNoImageError;
+      return t('image.imageErrors.FetchImageNoImageError');
     }
     return image;
   } catch (error) {
     if (error.message === Enums.MESSAGE.Errors.DecryptionError) {
-      return Enums.MESSAGE.Errors.FetchImageNoImageError;
+      return t('image.imageErrors.FetchImageNoImageError');
     }
-    return Enums.MESSAGE.Errors.FetchImageError;
+    return t('image.imageErrors.FetchImagesError');
   }
 };
 
-const fetchImagesInAlbum = async albumId => {
+const fetchImagesInAlbum = async (albumId, t) => {
   if (!albumId) {
-    return Enums.MESSAGE.Errors.AlbumIdMissing;
+    return t('commonErrors.AlbumIdMissing');
   }
   try {
     const decodedId = await urlSafeEncode.decodeUrlSafeBase64(albumId);
@@ -296,7 +296,7 @@ const fetchImagesInAlbum = async albumId => {
     let albumRef;
     await albumQuery.get().then(querySnapshot => {
       if (querySnapshot.size === 0) {
-        throw new Error(Enums.MESSAGE.Errors.FetchImageNoAlbumError);
+        throw new Error(t('album.albumErrors.FetchImageNoAlbumError'));
       }
       querySnapshot.forEach(doc => {
         if (doc.data()) {
@@ -306,12 +306,12 @@ const fetchImagesInAlbum = async albumId => {
     });
 
     if (albumRef === null) {
-      return Enums.MESSAGE.Errors.FetchImageNoAlbumError;
+      return t('album.albumErrors.FetchImageNoAlbumError');
     }
 
     const imagesSnapshot = await albumRef.collection('Images').get();
     if (imagesSnapshot.empty) {
-      return Enums.MESSAGE.Errors.FetchImageNoAlbumError;
+      return t('album.albumErrors.FetchImageNoAlbumError');
     }
 
     const images = imagesSnapshot.docs.map(doc => ({
@@ -321,18 +321,18 @@ const fetchImagesInAlbum = async albumId => {
     return images;
   } catch (error) {
     if (error.message === Enums.MESSAGE.Errors.DecryptionError) {
-      return Enums.MESSAGE.Errors.FetchImageNoAlbumError;
+      return t('album.albumErrors.FetchImageNoAlbumError');
     }
-    return Enums.MESSAGE.Errors.FetchAlbumError;
+    return t('image.imageErrors.FetchImagesError');
   }
 };
 
-const fetchFavoriteImages = async (userId, albumId) => {
+const fetchFavoriteImages = async (userId, albumId, t) => {
   if (!userId) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   if (!albumId) {
-    return Enums.MESSAGE.Errors.AlbumIdMissing;
+    return t('commonErrors.AlbumIdMissing');
   }
 
   try {
@@ -347,7 +347,7 @@ const fetchFavoriteImages = async (userId, albumId) => {
       .get();
 
     if (querySnapshot.empty) {
-      return Enums.MESSAGE.Errors.NoFavoriteImageError;
+      return t('gallery.NoFavoriteImages');
     }
 
     const favoriteImages = querySnapshot.docs.map(doc => ({
@@ -357,7 +357,7 @@ const fetchFavoriteImages = async (userId, albumId) => {
     return favoriteImages;
   } catch (error) {
     console.error('Error fetching albums:', error);
-    return Enums.MESSAGE.Errors.FetchFavoriteImagesError;
+    return t('album.albumErrors.FetchImagesError');
   }
 };
 
@@ -366,15 +366,16 @@ const ImageFavoriteStatusChange = async (
   albumId,
   imageId,
   isFavorite,
+  t,
 ) => {
   if (!userId) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   if (!albumId) {
-    return Enums.MESSAGE.Errors.AlbumIdMissing;
+    return t('commonErrors.AlbumIdMissing');
   }
   if (!imageId) {
-    return Enums.MESSAGE.Errors.ImageIdMissing;
+    return t('commonErrors.ImageMissing');
   }
 
   try {
@@ -387,20 +388,21 @@ const ImageFavoriteStatusChange = async (
     return Enums.STATUS.Success;
   } catch (error) {
     console.error('Error change favorite:', error);
-    return Enums.MESSAGE.Errors.ImageFavoriteChangeError;
+    return t('image.imageErrors.ImageFavoriteChangeError');
   }
 };
 
-const deleteImage = async (userUid, albumUid, imageUid) => {
+const deleteImage = async (userUid, albumUid, imageUid, t) => {
   if (!userUid) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   if (!albumUid) {
-    return Enums.MESSAGE.Errors.AlbumIdMissing;
+    return t('commonErrors.AlbumIdMissing');
   }
   if (!imageUid) {
-    return Enums.MESSAGE.Errors.ImageIdMissing;
+    return t('commonErrors.ImageMissing');
   }
+
   try {
     const imageRef = storage().ref(
       `Users/${userUid}/Albums/${albumUid}/Images/${imageUid}`,
@@ -414,24 +416,24 @@ const deleteImage = async (userUid, albumUid, imageUid) => {
     );
     await imageCollection.delete().catch(error => {
       console.error(error);
-      return Enums.MESSAGE.Errors.DeleteImageFirestoreError;
+      return t('image.imageErrors.DeleteImageFirestoreError');
     });
     return Enums.STATUS.Success;
   } catch (error) {
     console.error(error);
-    return Enums.MESSAGE.Errors.DeleteImageGenericError;
+    return t('image.imageErrors.DeleteImageGenericError');
   }
 };
 
-const editCoverImage = async (userUid, albumUid, imagePath) => {
+const editCoverImage = async (userUid, albumUid, imagePath, t) => {
   if (!userUid) {
-    return Enums.MESSAGE.Errors.UserIdMissing;
+    return t('commonErrors.UserIdMissing');
   }
   if (!albumUid) {
-    return Enums.MESSAGE.Errors.AlbumIdMissing;
+    return t('commonErrors.AlbumIdMissing');
   }
   if (!imagePath) {
-    return Enums.MESSAGE.Errors.ImagePathMissing;
+    return t('commonErrors.ImageMissing');
   }
   try {
     const albumRef = storage().ref(`Users/${userUid}/Albums/${albumUid}/`);
@@ -446,7 +448,7 @@ const editCoverImage = async (userUid, albumUid, imagePath) => {
     );
     const imageBlob = await response.blob();
     if (!imageBlob) {
-      return Enums.MESSAGE.Errors.ImageCannotConvertToBlob;
+      return t('image.imageErrors.ImageCannotConvertToBlob');
     }
     const imageRef = storage().ref(
       `Users/${userUid}/Albums/${albumUid}/${Date.now()}.jpg`,
@@ -459,7 +461,7 @@ const editCoverImage = async (userUid, albumUid, imagePath) => {
     return Enums.STATUS.Success;
   } catch (error) {
     console.error(error);
-    return Enums.MESSAGE.Errors.DeleteImageGenericError;
+    return t('album.albumErrors.ImageCoverCannotChanged');
   }
 };
 

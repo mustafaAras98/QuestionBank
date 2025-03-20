@@ -1,30 +1,35 @@
 import {Enums} from '../../Constants/Enums';
 
-const ValidatePasswordSchema = (password, minLength, maxLength) => {
+const ValidatePasswordSchema = (password, minLength, maxLength, t) => {
   const upperCaseLetter = /[A-Z]/;
   const lowerCaseLetter = /[a-z]/;
   const number = /[0-9]/;
 
+  let errors = '';
   if (!password) {
-    return Enums.MESSAGE.Validations.PasswordNotFound;
+    return t('validationErrors.PasswordNotFound');
   }
   if (typeof password !== 'string') {
-    return Enums.MESSAGE.Validations.PasswordFormatMessage;
+    errors += t('validationErrors.PasswordFormatMessage') + '\n';
   }
   if (password.length < minLength || password.length > maxLength) {
-    return Enums.MESSAGE.Validations.PasswordCharacterMessage(
-      minLength,
-      maxLength,
-    );
+    errors +=
+      t('validationErrors.PasswordCharacterMessage', {
+        min: minLength,
+        max: maxLength,
+      }) + '\n';
   }
   if (!upperCaseLetter.test(password)) {
-    return Enums.MESSAGE.Validations.PasswordAtLeastOneUppercase;
+    errors += t('validationErrors.PasswordAtLeastOneUppercase') + '\n';
   }
   if (!lowerCaseLetter.test(password)) {
-    return Enums.MESSAGE.Validations.PasswordAtLeastOneLowercase;
+    errors += t('validationErrors.PasswordAtLeastOneLowercase') + '\n';
   }
   if (!number.test(password)) {
-    return Enums.MESSAGE.Validations.PasswordAtLeastOneNumber;
+    errors += t('validationErrors.PasswordAtLeastOneNumber') + '\n';
+  }
+  if (errors !== '') {
+    return errors.trim();
   }
   return Enums.STATUS.Success;
 };

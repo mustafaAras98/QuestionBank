@@ -20,6 +20,7 @@ import ReactNativeBlobUtil from 'react-native-blob-util';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {createStyles} from './DisplayImageModal.style';
 import {Colors} from '../../../Constants/Colors';
+import {useTranslation} from 'react-i18next';
 
 const DisplayImageModal = ({
   isModalVisible,
@@ -27,6 +28,7 @@ const DisplayImageModal = ({
   imageUrl,
   title,
 }) => {
+  const {t} = useTranslation();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isDownloadCompleted, setIsDownloadCompleted] = useState(false);
   const taskRef = useRef(null);
@@ -65,11 +67,11 @@ const DisplayImageModal = ({
       const result = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
         {
-          title: 'Storage Permission',
-          message: 'Question Bank needs storage permission for saving images',
-          buttonNeutral: 'Ask me later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
+          title: t('permissons.storagePerm.StoragePermission'),
+          message: t('permissons.storagePerm.StoragePermissionMessage'),
+          buttonNeutral: t('commonUse.AskMeLater'),
+          buttonNegative: t('commonUse.Cancel'),
+          buttonPositive: t('commonUse.Ok'),
         },
       );
 
@@ -77,11 +79,14 @@ const DisplayImageModal = ({
         return true;
       } else if (result === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
         Alert.alert(
-          'Permission Required',
-          'Storage permission is required to save images. Please enable it in app settings.',
+          t('permissons.storagePerm.StoragePermission'),
+          t('permissons.storagePerm.StoragePermissionMessage'),
           [
-            {text: 'Cancel', style: 'cancel'},
-            {text: 'Go to Settings', onPress: () => Linking.openSettings()},
+            {text: t('commonUse.Cancel'), style: 'cancel'},
+            {
+              text: t('commonUse.GoToSettings'),
+              onPress: () => Linking.openSettings(),
+            },
           ],
         );
         return false;
@@ -140,10 +145,10 @@ const DisplayImageModal = ({
         .then(async res => {
           await copyMediaToStorage(res.path(), fileName);
           ToastAndroid.show(
-            'Image has been saved',
+            t('image.ImageSaved'),
             ToastAndroid.SHORT,
             ToastAndroid.BOTTOM,
-            1000
+            1000,
           );
           setIsDownloadCompleted(true);
           setIsDownloading(false);
@@ -159,6 +164,7 @@ const DisplayImageModal = ({
       console.error('downloadAndSaveImage:', error);
     }
   };
+
   return (
     <Modal
       animationType="fade"
@@ -175,9 +181,6 @@ const DisplayImageModal = ({
             </Text>
           </TouchableOpacity>
           <View style={styles.Header}>
-            <Text adjustsFontSizeToFit style={styles.Title}>
-              {title}
-            </Text>
             <TouchableOpacity
               disabled={isDownloading || isDownloadCompleted}
               onPress={downloadAndSaveImage}
@@ -200,6 +203,9 @@ const DisplayImageModal = ({
                 />
               )}
             </TouchableOpacity>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={styles.Title}>
+              {title}
+            </Text>
           </View>
           {imageUrl && (
             <TouchableOpacity

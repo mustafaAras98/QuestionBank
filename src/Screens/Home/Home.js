@@ -13,8 +13,10 @@ import AlbumCard from '../../Components/AlbumCard';
 import {Enums} from '../../Constants/Enums';
 import {useFocusEffect} from '@react-navigation/native';
 import Header from '../../Components/Header/Header';
+import {useTranslation} from 'react-i18next';
 
 const Home = () => {
+  const {t} = useTranslation();
   const user = useSelector(state => state.user);
   const userId = user.info?.uid;
 
@@ -27,6 +29,7 @@ const Home = () => {
   const [albumDatas, setAlbumDatas] = useState([]);
   const [paddedData, setPaddedData] = useState([]);
   const [activeCardId, setActiveCardId] = useState(null);
+  const [isLanguageContainerOpen, setIsLanguageContainerOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
@@ -43,12 +46,12 @@ const Home = () => {
     }
 
     try {
-      const datas = await albumService.fetchAlbumsByUserId(userId);
+      const datas = await albumService.fetchAlbumsByUserId(userId, t);
       setAlbumDatas(datas);
     } catch (error) {
       console.error('Album titles fetch error:', error);
     }
-  }, [userId]);
+  }, [userId, t]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -56,8 +59,13 @@ const Home = () => {
     setRefreshing(false);
   }, [fetchAlbumDatas]);
 
+  const handlePressLanguageContainer = useCallback(() => {
+    setIsLanguageContainerOpen(!isLanguageContainerOpen);
+  }, [isLanguageContainerOpen]);
+
   const handlePressOutside = useCallback(() => {
     setActiveCardId(null);
+    setIsLanguageContainerOpen(false);
   }, []);
 
   const handleLongPressOnAlbum = useCallback(uid => {
@@ -91,7 +99,7 @@ const Home = () => {
     const isAlbumsEmpty =
       !albumDatas ||
       albumDatas.length === 0 ||
-      albumDatas === Enums.MESSAGE.Errors.AlbumsDontExists;
+      albumDatas === t('album.albumErrors.AlbumDontExists');
 
     if (isAlbumsEmpty) {
       updatedData = [{Uid: 'placeholder-1', isPlaceholder: true}];
@@ -104,7 +112,7 @@ const Home = () => {
     }
 
     setPaddedData(updatedData);
-  }, [albumDatas, userId]);
+  }, [albumDatas, userId, t]);
 
   const getRowPosition = useCallback((index, totalItems) => {
     const rowNumber = Math.round(totalItems / 2);
@@ -160,7 +168,6 @@ const Home = () => {
       getRowPosition,
     ],
   );
-
   return (
     <BackgroundContainer>
       <TouchableWithoutFeedback
@@ -168,7 +175,10 @@ const Home = () => {
         onPress={handlePressOutside}>
         <View style={styles.Container}>
           <View style={styles.HeaderContainer}>
-            <Header />
+            <Header
+              setIsLanguageContainerOpen={handlePressLanguageContainer}
+              isLanguageContainerOpen={isLanguageContainerOpen}
+            />
           </View>
           <View style={styles.GlassBackground}>
             <View style={styles.FlatListContainer}>

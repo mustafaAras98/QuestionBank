@@ -74,9 +74,9 @@ export const createStyles = theme => {
         : Colors.LightTheme.Text,
     },
     SeperatorText: {
-      flex: 1,
+      flex: 2,
       textAlign: 'center',
-      justifyContent: 'center',
+      textAlignVertical: 'center',
       fontWeight: 700,
       fontSize: 18,
       color: isDarkTheme ? Colors.DarkTheme.Text : Colors.LightTheme.Text,

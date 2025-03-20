@@ -14,8 +14,10 @@ import DisplayImageModal from '../Modals/DisplayImageModal';
 import {useSelector} from 'react-redux';
 import {Colors} from '../../Constants/Colors';
 import {Enums} from '../../Constants/Enums';
+import {useTranslation} from 'react-i18next';
 
 const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
+  const {t} = useTranslation();
   const favoriteFlatlistRef = useRef(null);
   const [containerSize, setContainerSize] = useState({width: 0, height: 0});
   const [selectedImage, setSelectedImage] = useState(null);
@@ -45,7 +47,7 @@ const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
           />
           <View style={styles.FlatlistItemTextBackground}>
             <Text
-              minimumFontScale={0.8}
+              numberOfLines={1}
               adjustsFontSizeToFit
               style={styles.FlatlistItemText}>
               {item.Name}
@@ -62,7 +64,7 @@ const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
       <View style={styles.FavoriteContainer}>
         <View style={styles.FavoriteHeader}>
           <Text adjustsFontSizeToFit style={styles.HeaderText}>
-            Favorite Image
+            {t('gallery.FavoriteImage')}
           </Text>
           <FontAwesome6
             adjustsFontSizeToFit
@@ -84,7 +86,7 @@ const FavoriteFlatlist = ({favoriteImageList, isLoading}) => {
         ) : !favoriteImageList || favoriteImageList.length === 0 ? (
           <View style={styles.NoFavoriteContainer}>
             <Text adjustsFontSizeToFit style={styles.NoFavoriteText}>
-              There are no favorite images{' '}
+              {t('gallery.NoFavoriteImages')}
             </Text>
           </View>
         ) : (

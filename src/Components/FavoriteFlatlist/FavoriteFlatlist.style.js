@@ -85,6 +85,8 @@ export const createStyles = theme => {
     },
     NoFavoriteText: {
       fontSize: 18,
+      textAlign: 'center',
+      textAlignVertical: 'center',
       color: isDarkTheme ? Colors.DarkTheme.Text : Colors.LightTheme.Text,
       fontWeight: '700',
     },

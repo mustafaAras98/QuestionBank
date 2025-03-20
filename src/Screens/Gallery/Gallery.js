@@ -6,7 +6,6 @@ import {
   Image,
   ActivityIndicator,
   Share,
-  Alert,
   RefreshControl,
 } from 'react-native';
 import React, {useState, useCallback, useRef, useEffect, useMemo} from 'react';
@@ -32,8 +31,10 @@ import {createStyles} from './Gallery.style';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {Enums} from '../../Constants/Enums';
 import {Colors} from '../../Constants/Colors';
+import {useTranslation} from 'react-i18next';
 
 const Gallery = ({route}) => {
+  const {t} = useTranslation();
   const user = useSelector(state => state.user);
   const theme = useSelector(state => state.theme.theme);
   let styles = useMemo(() => createStyles(theme), [theme]);
@@ -50,25 +51,27 @@ const Gallery = ({route}) => {
   const [imagesData, setImagesData] = useState(null);
   const [favoriteImages, setFavoriteImages] = useState(null);
   const [isAddImageModalVisible, setIsAddImageModalVisible] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState(null);
-  const [sharedId, setSharedId] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
-  const [showAlbum, setShowAlbum] = useState(false);
-  const [isVisibleError, setIsVisibleError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [selectedImage, setSelectedImage] = useState(null);
   const [isRenderItemButtonsVisible, setIsRenderItemButtonsVisible] =
     useState(null);
-  const [refreshing, setRefreshing] = useState(false);
+
+  const [isSharedAlbum, setIsSharedAlbum] = useState(false);
+  const [dropdownValue, setDropdownValue] = useState(null);
+  const [sharedId, setSharedId] = useState('');
+  const [errorMsg, setErrorMsg] = useState(false);
+  const [isVisibleError, setIsVisibleError] = useState(false);
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    if (albumId === -1 && showAlbum) {
+    if (albumId === -1 && isSharedAlbum) {
       let images = await albumService.fetchImagesInAlbum(sharedId);
-      if (typeof images === 'object') {
+      if (images[0]?.Uid) {
         setFavoriteImages(images.filter(item => item.IsFavorite));
         setImagesData(images);
-        setShowAlbum(true);
+        setIsSharedAlbum(true);
         setIsVisibleError(false);
       } else {
         setIsVisibleError(true);
@@ -91,7 +94,7 @@ const Gallery = ({route}) => {
 
       return () => {
         navigation.setParams({albumId: -1});
-        setShowAlbum(false);
+        setIsSharedAlbum(false);
         setSharedId('');
         setDropdownValue(null);
         setErrorMsg(null);
@@ -102,10 +105,15 @@ const Gallery = ({route}) => {
 
   useEffect(() => {
     if (sharedType && sharedUid) {
-      setDropdownValue(sharedType);
+      const typeList = t('GalleryTypeList', {returnObjects: true}).map(
+        item => Object.values(item)[0],
+      );
+      sharedType === Enums.OpenImageList.Album
+        ? setDropdownValue(typeList[0])
+        : setDropdownValue(typeList[1]);
       setSharedId(sharedUid);
     }
-  }, [sharedType, sharedUid, albumId]);
+  }, [sharedType, sharedUid, albumId, t]);
 
   const reFetchImages = () => {
     fetchData();
@@ -120,21 +128,21 @@ const Gallery = ({route}) => {
 
     setImageLoading(true);
     try {
-      const images = await albumService.fetchImages(user.info.uid, albumId);
-      if (images !== Enums.MESSAGE.Errors.NoImageError) {
+      const images = await albumService.fetchImages(user.info.uid, albumId, t);
+      if (images[0]?.Uid) {
         const favorites = images.filter(item => item.IsFavorite);
         setFavoriteImages(favorites);
         setImagesData(images);
       } else {
         setFavoriteImages([]);
-        setImagesData([]);
+        setImagesData(t('album.albumErrors.NoImageError'));
       }
     } catch (error) {
-      console.error('Image fetch error:', error);
-      setImagesData(Enums.MESSAGE.Errors.NoImageError);
+      console.error(error);
+      setImagesData([]);
     }
     setImageLoading(false);
-  }, [albumId, user.info.uid]);
+  }, [albumId, user.info.uid, t]);
 
   // eslint-disable-next-line react/no-unstable-nested-components
   const RightAction = (userId, albumUid, imageId) => {
@@ -161,7 +169,7 @@ const Gallery = ({route}) => {
         url: deepLink,
       });
     } catch (error) {
-      Alert.alert(error.message);
+      console.error(error);
     }
   };
 
@@ -191,6 +199,7 @@ const Gallery = ({route}) => {
                     albumId,
                     item.Uid,
                     item.IsFavorite,
+                    t,
                   );
                   reFetchImages();
                 }}
@@ -217,7 +226,12 @@ const Gallery = ({route}) => {
           <Image style={styles.ImageComp} source={{uri: item.ImageURL}} />
           {item?.Name ? (
             <View style={styles.FlatlistItemNameContainer}>
-              <Text style={styles.FlatlistItemNameText}>{item.Name}</Text>
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={styles.FlatlistItemNameText}>
+                {item.Name}
+              </Text>
             </View>
           ) : null}
         </TouchableOpacity>
@@ -235,30 +249,35 @@ const Gallery = ({route}) => {
         <Image style={styles.ImageComp} source={{uri: item.ImageURL}} />
         {item?.Name ? (
           <View style={styles.FlatlistItemNameContainer}>
-            <Text style={styles.FlatlistItemNameText}>{item.Name}</Text>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={styles.FlatlistItemNameText}>
+              {item.Name}
+            </Text>
           </View>
         ) : null}
       </TouchableOpacity>
     );
   };
 
-  const fetchImageSwitch = async () => {
+  const fetchImageSwitch = async typeList => {
     switch (dropdownValue) {
-      case Enums.OpenImageList.Album:
-        let images = await albumService.fetchImagesInAlbum(sharedId);
-        if (typeof images === 'object') {
+      case typeList[0]:
+        let images = await albumService.fetchImagesInAlbum(sharedId, t);
+        if (images[0]?.Uid) {
           setFavoriteImages(images.filter(item => item.IsFavorite));
           setImagesData(images);
-          setShowAlbum(true);
+          setIsSharedAlbum(true);
           setIsVisibleError(false);
         } else {
           setIsVisibleError(true);
           setErrorMsg(images);
         }
         break;
-      case Enums.OpenImageList.Image:
-        const aloneImage = await albumService.fetchImage(sharedId);
-        if (typeof aloneImage === 'object') {
+      case typeList[1]:
+        const aloneImage = await albumService.fetchImage(sharedId, t);
+        if (aloneImage[0]?.Uid) {
           setSelectedImage(aloneImage);
           setIsVisibleError(false);
         } else {
@@ -271,64 +290,74 @@ const Gallery = ({route}) => {
     }
   };
 
+  const renderDropDownSection = () => {
+    const typeList = t('GalleryTypeList', {returnObjects: true}).map(
+      item => Object.values(item)[0],
+    );
+
+    return (
+      <View style={styles.NoAlbumIdContainer}>
+        <View style={styles.DropdownlistContainer}>
+          <DropdownList
+            setValue={setDropdownValue}
+            value={dropdownValue}
+            list={typeList}
+          />
+        </View>
+        {dropdownValue && (
+          <View style={styles.SharedIdContainer}>
+            <TextInputComp
+              onChangeValue={setSharedId}
+              value={sharedId}
+              placeholder={`${dropdownValue} ID`}
+              theme={theme}
+              multiline={true}
+            />
+          </View>
+        )}
+        <View style={styles.NoAlbumButtonContainer}>
+          <TouchableOpacity
+            disabled={dropdownValue === null || sharedId === ''}
+            style={
+              dropdownValue === null || sharedId === ''
+                ? styles.NoAlbumButtonDisabled
+                : styles.NoAlbumButton
+            }
+            onPress={() => {
+              fetchImageSwitch(typeList);
+            }}>
+            <Text style={styles.NoAlbumButtonText}>
+              {!dropdownValue
+                ? t('dropdownlist.SelectOne')
+                : t('dropdownlist.ClickToGet', {
+                    value: dropdownValue,
+                  })}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {isVisibleError && (
+          <View style={styles.NoAlbumButtonErrorContainer}>
+            <Text adjustsFontSizeToFit style={styles.NoAlbumButtonErrorText}>
+              {errorMsg}
+            </Text>
+          </View>
+        )}
+      </View>
+    );
+  };
+
   return (
     <BackgroundContainer>
       <View style={styles.Container}>
-        {albumId === -1 && !showAlbum ? (
-          <View style={styles.NoAlbumIdContainer}>
-            <View style={styles.DropdownlistContainer}>
-              <DropdownList
-                setValue={setDropdownValue}
-                value={dropdownValue}
-                list={Enums.Lists.OpenImageList}
-              />
-            </View>
-            {dropdownValue && (
-              <View style={styles.SharedIdContainer}>
-                <TextInputComp
-                  onChangeValue={setSharedId}
-                  value={sharedId}
-                  placeholder={`${dropdownValue} ID`}
-                  theme={theme}
-                  multiline={true}
-                />
-              </View>
-            )}
-            <View style={styles.NoAlbumButtonContainer}>
-              <TouchableOpacity
-                disabled={dropdownValue === null || sharedId === ''}
-                style={
-                  dropdownValue === null || sharedId === ''
-                    ? styles.NoAlbumButtonDisabled
-                    : styles.NoAlbumButton
-                }
-                onPress={async () => {
-                  fetchImageSwitch();
-                }}>
-                <Text style={styles.NoAlbumButtonText}>
-                  {!dropdownValue
-                    ? 'Select from list'
-                    : `Click to get ${dropdownValue}`}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            {isVisibleError && (
-              <View style={styles.NoAlbumButtonErrorContainer}>
-                <Text
-                  adjustsFontSizeToFit
-                  style={styles.NoAlbumButtonErrorText}>
-                  {errorMsg}
-                </Text>
-              </View>
-            )}
-          </View>
+        {albumId === -1 && !isSharedAlbum ? (
+          renderDropDownSection()
         ) : (
           <View style={styles.AlbumContainer}>
             <FavoriteFlatlist
               favoriteImageList={favoriteImages}
               isLoading={imageLoading}
             />
-            {showAlbum && selectedImage && (
+            {isSharedAlbum && selectedImage && (
               <DisplayImageModal
                 isModalVisible={!!selectedImage}
                 setSelectedImage={setSelectedImage}
@@ -336,7 +365,7 @@ const Gallery = ({route}) => {
                 title={selectedImage.Name}
               />
             )}
-            {!showAlbum && (
+            {!isSharedAlbum && (
               <View style={styles.ButtonRowContainer}>
                 <TouchableOpacity
                   style={styles.ImageButton}
@@ -353,7 +382,7 @@ const Gallery = ({route}) => {
                     });
                   }}>
                   <Text adjustsFontSizeToFit style={styles.ImageButtonText}>
-                    {'Take\nPhoto'}
+                    {`${t('gallery.TakePhoto').replace(' ', '\n')}`}
                   </Text>
                   <FontAwesome6
                     style={styles.ImageButtonIcon}
@@ -376,7 +405,7 @@ const Gallery = ({route}) => {
                     });
                   }}>
                   <Text adjustsFontSizeToFit style={styles.ImageButtonText}>
-                    {'Select\nImage'}
+                    {`${t('gallery.SelectImage').replace(' ', '\n')}`}
                   </Text>
                   <FontAwesome6
                     style={styles.ImageButtonIcon}
@@ -414,12 +443,11 @@ const Gallery = ({route}) => {
                       : Colors.LightTheme.Text
                   }
                 />
-              ) : (typeof imagesData === 'string' &&
-                  imagesData === Enums.MESSAGE.Errors.NoImageError) ||
-                !imagesData ||
-                imagesData.length === 0 ? (
+              ) : !imagesData ||
+                !imagesData[0]?.Uid ||
+                imagesData === t('album.albumErrors.NoImageError') ? (
                 <Text adjustsFontSizeToFit style={styles.NoImageText}>
-                  {Enums.MESSAGE.Errors.NoImageError}
+                  {imagesData}
                 </Text>
               ) : (
                 <FlatList
@@ -428,7 +456,7 @@ const Gallery = ({route}) => {
                   ref={flatlistRef}
                   numColumns={2}
                   keyExtractor={item => item.Uid}
-                  renderItem={showAlbum ? renderAlbum : renderItem}
+                  renderItem={isSharedAlbum ? renderAlbum : renderItem}
                   columnWrapperStyle={styles.FlatlistColumnWrapperStyle}
                   contentContainerStyle={styles.FlatlistContentContainerStyle}
                   refreshControl={

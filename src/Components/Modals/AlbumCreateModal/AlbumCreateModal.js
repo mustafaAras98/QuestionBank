@@ -20,8 +20,10 @@ import {Enums} from '../../../Constants/Enums';
 import {Colors} from '../../../Constants/Colors';
 
 import TextInputComp from '../../TextInputComp';
+import {useTranslation} from 'react-i18next';
 
 const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
+  const {t} = useTranslation();
   const [title, setTitle] = useState('');
   const titleRef = useRef(title);
 
@@ -39,34 +41,22 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
   let styles = useMemo(() => createStyles(theme), [theme]);
 
   const handleCreateNewAlbum = async () => {
-    if (title === '') {
-      Alert.alert('Title Not Found', 'Title not found. Please enter a title.', [
-        {text: 'OK', onPress: () => null},
-      ]);
-      return;
-    }
-    if (!image) {
-      Alert.alert(
-        'Photo Not Found',
-        'Photo not found. Please take a new photo or select one.',
-        [{text: 'OK', onPress: () => null}],
-      );
-      return;
-    }
-
     setLoading(true);
     try {
       const status = await albumService.createNewAlbum(
         userUid,
         title,
-        image.path,
+        image?.path,
+        t,
       );
       if (status !== Enums.STATUS.Success) {
-        throw new Error(`Album creation failed: ${status}`);
+        throw new Error(status);
       }
     } catch (error) {
-      console.error('Create album error:', error);
-      Alert.alert('Error', error.message || 'Something went wrong.');
+      Alert.alert(
+        t('commonUse.Error'),
+        error.message || t('commonErrors.UnknownError'),
+      );
     } finally {
       setLoading(false);
     }
@@ -102,15 +92,17 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
             </Text>
           </TouchableOpacity>
           <View style={styles.Header}>
-            <Text style={styles.Title}>Create New Album</Text>
+            <Text style={styles.Title}>
+              {t('modals.CreateNewAlbumModal.Title')}
+            </Text>
           </View>
           <View style={styles.FormContainer}>
             <View style={styles.TitleInputContainer}>
               <TextInputComp
                 maxLength={18}
                 theme={theme}
-                label="Title"
-                placeholder="Title"
+                label={t('commonUse.Title')}
+                placeholder={t('commonUse.Title')}
                 value={title}
                 onChangeValue={handleTitleChange}
               />
@@ -136,7 +128,7 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                   }}
                   style={styles.ImagePickerButton}>
                   <Text adjustsFontSizeToFit style={styles.ImagePickerText}>
-                    {'Take\nPhoto'}
+                    {`${t('gallery.TakePhoto').replace(' ', '\n')}`}
                   </Text>
                   <FontAwesome6
                     adjustsFontSizeToFits
@@ -161,7 +153,7 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                   }}
                   style={styles.ImagePickerButton}>
                   <Text adjustsFontSizeToFit style={styles.ImagePickerText}>
-                    {'Select\nImage'}
+                    {`${t('gallery.SelectImage').replace(' ', '\n')}`}
                   </Text>
                   <FontAwesome6
                     adjustsFontSizeToFits
@@ -194,7 +186,7 @@ const AlbumCreateModal = ({modalVisible, setModalVisible, reFetchAlbums}) => {
                     adjustsFontSizeToFit
                     numberOfLines={1}
                     style={styles.ButtonText}>
-                    Create New Album
+                    {t('modals.CreateNewAlbumModal.ButtonText')}
                   </Text>
                 </TouchableOpacity>
               )}

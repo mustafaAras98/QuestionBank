@@ -17,6 +17,7 @@ import BottomTabNavigator from './Components/BottomTabNavigator';
 import {useNavigation} from '@react-navigation/native';
 import {Linking} from 'react-native';
 import {initializeTheme} from './Redux/Slices/themeSlice';
+import {initializeLang} from './Redux/Slices/langSlice';
 
 const AppNavigator = () => {
   const dispatch = useDispatch();
@@ -82,6 +83,7 @@ const AppNavigator = () => {
 
   useEffect(() => {
     dispatch(initializeTheme());
+    dispatch(initializeLang());
   }, [dispatch]);
 
   return (

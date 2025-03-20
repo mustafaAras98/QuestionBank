@@ -1,0 +1,131 @@
+{
+  "translation": {
+    "language": "tr",
+    "questionBankTitle": "Question Bank",
+    "commonUse": {
+      "Email": "E-Posta",
+      "Username": "Kullanıcı Adı",
+      "Password": "Şifre",
+      "ImageName": "Resmin Adı",
+      "Title": "Başlık",
+      "Or": "Veya",
+      "Error": "Hata",
+      "Ok": "Tamam",
+      "Cancel": "İptal",
+      "AskMeLater": "Daha sonra sor",
+      "GoToSettings": "Ayarlara git",
+      "SignOut": "Çıkış Yap",
+      "DeleteUser": "Kullanıcıyı Sil",
+      "Delete": "Sil",
+      "Share": "Paylaş",
+      "EditTitle": "Başlık Düzenleme"
+    },
+    "permissons": {
+      "storagePerm": {
+        "StoragePermission": "Depolama İzni",
+        "StoragePermissionMessage": "Question Bank resimleri kaydedebilmek için depolama iznine ihtiyaç duyar."
+      }
+    },
+    "placeholders": {
+      "EmailPlaceholder": "Lütfen E-Posta'nızı giriniz.",
+      "PasswordPlaceholder": "Lütfen şifrenizi giriniz.",
+      "UsernamePlaceholder": "Lütfen kullanıcı adınızı giriniz."
+    },
+    "userNotificationMessages": {
+      "ForgottenPasswordMailSent": "E-posta adresinize bir e-posta gönderildi.",
+      "UserDeleteConfirmation": "Tüm kullanıcı verileri ve daha önce oluşturulmuş içerikler kalıcı olarak silinecektir. Devam etmek istediğinizden emin misiniz?"
+    },
+    "authentication": {
+      "passwordForget": "Şifremi unuttum?",
+      "Login": "Giriş Yap",
+      "SignUp": "Kayıt Ol",
+      "LoginWithGoogle": "Google ile Giriş Yap",
+      "DontHaveAccount": "Hesabınız mı yok?",
+      "AlreadyHaveAccount": "Zaten bir hesabınız mı var?"
+    },
+    "gallery": {
+      "FavoriteImage": "Favori Resimler",
+      "TakePhoto": "Fotoğraf Çek",
+      "SelectImage": "Galeriden Seç",
+      "NoFavoriteImages": "Favori resim bulunmamaktadır."
+    },
+    "modals": {
+      "AddImageModal": {
+        "Title": "Albüme Fotoğraf Ekle",
+        "ButtonText": "Fotoğraf Ekle"
+      },
+      "CreateNewAlbumModal": {
+        "Title": "Albüm Oluştur",
+        "ButtonText": "Yeni Albüm Oluştur"
+      }
+    },
+    "dropdownlist": {
+      "SelectOne": "Lütfen seçiniz",
+      "SelectButtonDisabledText": "Lütfen değer seçiniz",
+      "ClickToGet": "{{value}} değerini almak için tıklayın."
+    },
+    "albumCard": {
+      "NewTitle": "Yeni Başlık Giriniz",
+      "EditAlbumCover": "Albüm Kapağını Değiş"
+    },
+    "GalleryTypeList": [{"Album": "Albüm"}, {"Image": "Fotoğraf"}],
+    "commonErrors": {
+      "UnknownError": "Bilinmeyen bir hata oluştu.",
+      "UserIdMissing": "Kullanıcı ID bilgisi eksik!",
+      "AlbumIdMissing": "Albüm ID bilgisi eksik!",
+      "TitleMissing": "Başlık bilgisi eksik!",
+      "ImageMissing": "Resim bulunamadı!"
+    },
+    "validationErrors": {
+      "EmailValidErrors": "Geçerli bir e-posta girin.",
+      "UsernameNotFound": "Lütfen bir kullanıcı adı girin.",
+      "UsernameMustBeString": "Kullanıcı adı metin olmalıdır.",
+      "UsernameCharacterMessage": "Kullanıcı adı en az {{min}} ve en fazla {{max}} karakter olmalıdır.",
+      "PasswordNotFound": "Lütfen bir şifre girin.",
+      "PasswordFormatMessage": "Geçerli bir şifre formatı girin.",
+      "PasswordCharacterMessage": "Şifre en az {{min}} ve en fazla {{max}} karakter olmalıdır.",
+      "PasswordAtLeastOneUppercase": "Şifre en az bir büyük harf içermelidir.",
+      "PasswordAtLeastOneLowercase": "Şifre en az bir küçük harf içermelidir.",
+      "PasswordAtLeastOneNumber": "Şifre en az bir sayı içermelidir."
+    },
+    "authenticationErrors": {
+      "EmailAlreadyExists": "Bu e-posta adresi zaten kullanımda.",
+      "InvalidEmail": "Geçersiz e-posta adresi.",
+      "OperationNotAllowed": "İşleme izin verilmiyor.",
+      "WeakPassword": "Şifre çok zayıf.",
+      "NetworkRequestFailed": "Lütfen ağ bağlantınızı kontrol edin.",
+      "InvalidCredential": "Kimlik doğrulama bilgileri hatalı.",
+      "TooManyRequest": "Çok Fazla Deneme.",
+      "EmailDontExists": "Verilen e-posta adresi mevcut kullanıcı hesaplarıyla eşleşmiyor.",
+      "SignInCancelled": "Kullanıcı google ile giriş yapma işlemini sonlandırdı.",
+      "IDTokenError": "Kullanıcının bilgileri bulunamadı."
+    },
+    "image": {
+      "ImageSaved": "Resim kaydedildi.",
+      "imageErrors": {
+        "AddNewImageError": "Albüme yeni resim eklenirken bilinmeyen bir hatayla karşılaşıldı.",
+        "ImageCannotConvertToBlob": "Resim blob tipine dönüştürülemedi.",
+        "FailedImageUpload": "Resim albüme yüklenirken başarısız olundu. Lütfen tekrar deneyin.",
+        "DeleteImageFirestoreError": "Firestore istenilen fotoğrafı silmekte başarısız oldu.",
+        "DeleteImageGenericError": "Fotoğraf silinememektedir.",
+        "ImageFavoriteChangeError": "Fotoğrafın favori durumu değişirken bir hata meydana geldi. Lütfen tekrar deneyin.",
+        "FetchImageNoImageError": "Girilen değerle uyan herhangi bir fotoğraf bulunmamaktadır."
+      }
+    },
+    "album": {
+      "DeleteAlbum": "Albüm Silme",
+      "albumErrors": {
+        "CreateNewAlbumError": "Yeni albüm eklenirken bilinmeyen bir hatayla karşılaşıldı.",
+        "AlbumDontExists": "Kullanıcının herhangi bir albümü bulunmamaktadır",
+        "NoImageError": "Albümde fotoğraf bulunmamaktadır.",
+        "FetchImagesError": "Albüme erişirken başarısız olundu. Lütfen tekrar deneyin.",
+        "ImageCoverCannotChanged": "Albüm kapağını değiştirirken başarısız olundu. Lütfen tekrar deneyin.",
+        "FetchImageNoAlbumError": "Girilen değerle uyan herhangi bir albüm bulunmamaktadır.",
+        "UpdateTitleError": "Firestore istenilen albümün başlığını değiştirememektedir.",
+        "DeleteAlbumStorageError": "Firebase Storage istenilen albümü silememektedir.",
+        "DeleteAlbumFirestoreError": "Firebase istenilen albümü silememektedir.",
+        "DeleteAlbumGenericError": "İstenilen albüm silinememektedir."
+      }
+    }
+  }
+}

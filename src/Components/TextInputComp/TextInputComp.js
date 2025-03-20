@@ -49,6 +49,7 @@ const TextInputComp = ({
         secureTextEntry={isPassword && !showPassword}
         multiline={multiline}
         placeholderTextColor={Colors.Common.Disabled}
+        adjustsFontSizeToFit
       />
       {hasRightLogo && (
         <TouchableOpacity onPress={rightLogoOnPress}>

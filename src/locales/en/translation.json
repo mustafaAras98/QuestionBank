@@ -1,0 +1,131 @@
+{
+  "translation": {
+    "language": "en",
+    "questionBankTitle": "Question Bank",
+    "commonUse": {
+      "Email": "E-Mail",
+      "Username": "Username",
+      "Password": "Password",
+      "ImageName": "Image Name",
+      "Title": "Title",
+      "Or": "Or",
+      "Error": "Error",
+      "Ok": "Ok",
+      "Cancel": "Cancel",
+      "AskMeLater": "AskMeLater",
+      "GoToSettings": "Go To Settings",
+      "SignOut": "Sign Out",
+      "DeleteUser": "Delete User",
+      "Delete": "Delete",
+      "Share": "Share",
+      "EditTitle": "Edit Title"
+    },
+    "permissons": {
+      "storagePerm": {
+        "StoragePermission": "Storage Permission",
+        "StoragePermissionMessage": "Question Bank needs storage permission for saving images."
+      }
+    },
+    "placeholders": {
+      "EmailPlaceholder": "Please enter your e-mail.",
+      "PasswordPlaceholder": "Please enter your password.",
+      "UsernamePlaceholder": "Please enter your username."
+    },
+    "userNotificationMessages": {
+      "ForgottenPasswordMailSent": "A mail has been sent to your email address.",
+      "UserDeleteConfirmation": "All user data and previously created content will be permanently deleted. Are you sure you want to proceed?"
+    },
+    "authentication": {
+      "passwordForget": "Forgot Password?",
+      "Login": "Login",
+      "SignUp": "Sign Up",
+      "LoginWithGoogle": "Sign in with Google",
+      "DontHaveAccount": "Don't have an account?",
+      "AlreadyHaveAccount": "Already have an account?"
+    },
+    "gallery": {
+      "FavoriteImage": "Favorite Image",
+      "TakePhoto": "Take Photo",
+      "SelectImage": "Select Image",
+      "NoFavoriteImages": "There are no favorite images."
+    },
+    "modals": {
+      "AddImageModal": {
+        "Title": "Add Image to Album",
+        "ButtonText": "Add Image"
+      },
+      "CreateNewAlbumModal": {
+        "Title": "Create Album",
+        "ButtonText": "Create New Album"
+      }
+    },
+    "dropdownlist": {
+      "SelectOne": "Please Select",
+      "ClickToGet": "Click to get {{value}}"
+    },
+    "albumCard": {
+      "NewTitle": "Enter New Title",
+      "EditAlbumCover": "Edit Album Cover"
+    },
+    "GalleryTypeList": [{"Album": "Album"}, {"Image": "Image"}],
+    "commonErrors": {
+      "UnknownError": "An unknown error occurred.",
+      "UserIdMissing": "User ID information is missing!",
+      "AlbumIdMissing": "Album ID information is missing!",
+      "TitleMissing": "Title information is missing!",
+      "ImageMissing": "Image is missing!"
+    },
+    "validationErrors": {
+      "EmailValidErrors": "Email must be valid.",
+      "UsernameNotFound": "Please enter a username.",
+      "UsernameMustBeString": "Username must be a valid text.",
+      "UsernameCharacterMessage": "Username must be between {{min}} and {{max}} characters long.",
+      "UsernameValidCharacters": "Usernames can only use letters, numbers, underscores, and periods.",
+      "PasswordNotFound": "Please enter a password",
+      "PasswordFormatMessage": "Please enter a valid password format.",
+      "PasswordCharacterMessage": "Password must be between {{min}} and {{max}} characters long.",
+      "PasswordAtLeastOneUppercase": "Password must contain at least one uppercase letter.",
+      "PasswordAtLeastOneLowercase": "Password must contain at least one lowercase letter.",
+      "PasswordAtLeastOneNumber": "Password must contain at least one number."
+    },
+    "authenticationErrors": {
+      "EmailAlreadyExists": "The email address is already in use.",
+      "InvalidEmail": "Invalid email address.",
+      "OperationNotAllowed": "Operation not allowed.",
+      "WeakPassword": "The password is too weak.",
+      "NetworkRequestFailed": "Please check your network connection.",
+      "InvalidCredential": "Auth Credentials is incorrect.",
+      "TooManyRequest": "Too Many Attempt.",
+      "EmailDontExists": "The provided email address does not match any existing user accounts.",
+      "SignInCancelled": "User cancelled google sign in process",
+      "IDTokenError": "No ID token found"
+    },
+    "image": {
+      "ImageSaved": "Image has been saved",
+      "imageErrors": {
+        "AddNewImageError": "An unknown error was encountered while adding a new image to the album.",
+        "ImageCannotConvertToBlob": "Image cannot convert to blob",
+        "FailedImageUpload": "Failed to add image to album. Please try again.",
+        "DeleteImageFirestoreError": "Firestore can not delete desired images.",
+        "DeleteImageGenericError": "Image can not be deleted.",
+        "ImageFavoriteChangeError": "Something went wrong while changing favoritism of photo. Please try again in a few moments.",
+        "FetchImageNoImageError": "There are no available image with that token."
+      }
+    },
+    "album": {
+      "DeleteAlbum": "Delete Album",
+      "albumErrors": {
+        "CreateNewAlbumError": "An unknown error was encountered while creating album.",
+        "AlbumDontExists": "User album does not exist",
+        "NoImageError": "There are no image on this album",
+        "FetchImagesError": "Something went wrong while accessing your images. Please try again in a few moments.",
+        "ImageCoverCannotChanged": "Something went wrong while editing album cover. Please try again in a few moments.",
+        "FetchImageNoAlbumError": "There are no available album with that token.",
+        "UpdateTitleError": "Firestore can not update title of desired albums",
+        "DeleteAlbumStorageError": "Firebase storage can not delete desired albums",
+        "DeleteAlbumFirestoreError": "Firebase can not delete desired albums",
+        "DeleteAlbumGenericError": "Desired album cannot be deleted."
+      }
+    }
+  }
+}

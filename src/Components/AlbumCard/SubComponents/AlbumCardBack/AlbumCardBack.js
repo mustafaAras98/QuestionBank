@@ -18,8 +18,10 @@ import {createStyles} from './AlbumCardBack.style';
 import {Enums} from '../../../../Constants/Enums';
 import Encrypt from '../../../../Utils/Encrypt';
 import urlSafeEncode from '../../../../Utils/UrlSafeEncode';
+import {useTranslation} from 'react-i18next';
 
 const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
+  const {t} = useTranslation();
   const [title, setTitle] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [editCoverLoading, setEditCoverLoading] = useState(false);
@@ -38,25 +40,31 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
     }
   }, [isFlipped]);
 
-  const handleError = useCallback((operation, error) => {
-    console.error(`${operation} Error:`, error);
-    Alert.alert('Error', error.message || 'Something went wrong.');
-  }, []);
+  const handleError = useCallback(
+    (operation, error) => {
+      console.error(`${operation}  t('commonUse.Error'):`, error);
+      Alert.alert(
+        t('commonUse.Error'),
+        error.message || t('commonErrors.UnknownError'),
+      );
+    },
+    [t],
+  );
 
   const handleDeleteButtonPress = useCallback(async () => {
     setDeleteLoading(true);
     try {
-      const status = await albumService.removeAlbum(albumItem.Uid, userUid);
+      const status = await albumService.removeAlbum(albumItem.Uid, userUid, t);
       if (status !== Enums.STATUS.Success) {
-        throw new Error(`Album deletion failed: ${status}`);
+        throw new Error(status);
       }
       reFetchAlbums();
     } catch (error) {
-      handleError('Delete Album', error);
+      handleError(t('album.DeleteAlbum'), error);
     } finally {
       setDeleteLoading(false);
     }
-  }, [albumItem.Uid, userUid, reFetchAlbums, handleError]);
+  }, [albumItem.Uid, userUid, reFetchAlbums, handleError, t]);
 
   const handleEditTitlePress = useCallback(async () => {
     try {
@@ -64,15 +72,16 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
         albumItem.Uid,
         userUid,
         title,
+        t,
       );
       if (status !== Enums.STATUS.Success) {
-        throw new Error(`Album title update failed: ${status}`);
+        throw new Error(status);
       }
       reFetchAlbums();
     } catch (error) {
-      handleError('Edit Title', error);
+      handleError(t('commonUse.EditTitle'), error);
     }
-  }, [albumItem.Uid, userUid, title, reFetchAlbums, handleError]);
+  }, [albumItem.Uid, userUid, title, reFetchAlbums, handleError, t]);
 
   const onShare = useCallback(async () => {
     try {
@@ -87,9 +96,9 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
         url: deepLink,
       });
     } catch (error) {
-      handleError('Share Error', error);
+      handleError(t('commonUse.Share'), error);
     }
-  }, [albumItem.Uid, handleError]);
+  }, [albumItem.Uid, handleError, t]);
 
   return (
     <TouchableOpacity
@@ -104,9 +113,10 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
             <TextInputComp
               theme={theme}
               rightLogoName="pen"
-              placeholder="New Title"
+              placeholder={t('albumCard.NewTitle')}
               value={title}
               onChangeValue={handleTitleChange}
+              maxLength={18}
               rightLogoOnPress={async () => {
                 await handleEditTitlePress();
               }}
@@ -119,7 +129,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
             <View style={styles.AlbumCardBackItem}>
               <ButtonComp
                 theme={theme}
-                buttonText="Edit Album Cover"
+                buttonText={t('albumCard.EditAlbumCover')}
                 onPress={async () => {
                   ImageCropPicker.openPicker({
                     width: 512,
@@ -134,6 +144,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
                         userUid,
                         albumItem.Uid,
                         returnedImage.path,
+                        t,
                       );
                       setEditCoverLoading(false);
                       reFetchAlbums();
@@ -156,7 +167,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
             ) : (
               <ButtonComp
                 theme={Enums.BUTTON_TYPES.Delete}
-                buttonText="Delete"
+                buttonText={t('commonUse.Delete')}
                 onPress={async () => {
                   await handleDeleteButtonPress();
                   reFetchAlbums();
@@ -168,7 +179,7 @@ const AlbumCardBack = ({onLongPress, albumItem, reFetchAlbums, isFlipped}) => {
           <View style={styles.AlbumCardBackButton}>
             <ButtonComp
               theme={theme}
-              buttonText="Share"
+              buttonText={t('commonUse.Share')}
               onPress={async () => {
                 await onShare();
               }}
